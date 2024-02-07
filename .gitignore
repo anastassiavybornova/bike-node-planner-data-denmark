@@ -162,3 +162,5 @@ cython_debug/
 # added
 .DS_Store
 data/RIDA/*
+vej_type.gpkg
+vej_basislinje.gpkg
