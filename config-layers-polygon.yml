@@ -1,43 +1,43 @@
 "land_anvendelse":
-  "Løvtræ": ignore
-  "Blandet": ignore
-  "Sandklit": ignore
-  "Dyrkede afgrøder på marker": ignore
+  "Løvtræ": nature
+  "Blandet": nature
+  "Sandklit": nature
+  "Dyrkede afgrøder på marker": agriculture
   "Lav bebyggelse": ignore
-  "Afgræssede marker": ignore
-  "Skov": ignore
-  "Braklagte marker": ignore
-  "Sø": ignore
-  "Vådområde": ignore
-  "Sommerhusområde skov": ignore
-  "Sommerhusområde": ignore
-  "Andre": ignore
-  "Hede": ignore
+  "Afgræssede marker": agriculture
+  "Skov": nature
+  "Braklagte marker": agriculture
+  "Sø": nature
+  "Vådområde": nature
+  "Sommerhusområde skov": sommerhus
+  "Sommerhusområde": sommerhus
+  "Andre": verify
+  "Hede": nature
   "Sportsanlæg": ignore
   "Råstofområde": ignore
   "Gartneri": ignore
-  "Nåletræ": ignore
-  "Kratbevoksning": ignore
-  "Erhverv": ignore
-  "Bykerne": ignore
-  "Energiforsyningsanlæg": ignore
-  "Militært anlæg": ignore
-  "Høj bebyggelse": ignore
-  "Lufthavn": ignore
-  "Affaldsanlæg": ignore
+  "Nåletræ": nature
+  "Kratbevoksning": nature
+  "Erhverv": verify
+  "Bykerne": culture
+  "Energiforsyningsanlæg": verify
+  "Militært anlæg": verify
+  "Høj bebyggelse": verify
+  "Lufthavn": verify
+  "Affaldsanlæg": verify
 
 "land_beskyttnatur_flade":
-  "Beskyttet natur": ignore
+  "Beskyttet natur": nature
 
 "land_frednatpark":
-  "Fredet område": ignore
-  "Bekendtgørelsesfredning": ignore
-  "Naturnationalpark": ignore
-  "Naturpark": ignore
-  "Nationalpark": ignore
+  "Fredet område": nature
+  "Bekendtgørelsesfredning": nature
+  "Naturnationalpark": nature
+  "Naturpark": nature
+  "Nationalpark": nature
 
 "land_vaerdifuld":
-  "Værdifuldt kulturmiljø": ignore
-  "Bevaringsværdig landskab": ignore
-  "Kulturhistorisk bevaringsværdi": ignore
-  "Naturbeskyttelsesområde": ignore
+  "Værdifuldt kulturmiljø": culture
+  "Bevaringsværdig landskab": culture
+  "Kulturhistorisk bevaringsværdi": culture
+  "Naturbeskyttelsesområde": nature

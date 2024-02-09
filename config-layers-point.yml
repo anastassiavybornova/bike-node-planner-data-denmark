@@ -1,78 +1,78 @@
 "facilit_indkoeb":
-  "supermarked": ignore
-  "bager": ignore
-  "kiosk": ignore
-  "slagter": ignore
-  "Lokale smagsoplevelser": ignore
-  "tankstation": ignore
-  "fisk": ignore
+  "supermarked": service
+  "bager": service
+  "kiosk": service
+  "slagter": service
+  "Lokale smagsoplevelser": service
+  "tankstation": service
+  "fisk": service
 
 "facilit_overnatning":
-  "Bed & Breakfast": ignore
-  "Hotel": ignore
-  "Campingplads": ignore
-  "Slot/Herregård": ignore
-  "Vandrehjem": ignore
-  "Feriecenter": ignore
-  "Kro": ignore
+  "Bed & Breakfast": service
+  "Hotel": service
+  "Campingplads": service
+  "Slot/Herregård": service
+  "Vandrehjem": service
+  "Feriecenter": service
+  "Kro": service
 
 "facilit_rasteplads":
-  "Bænk": ignore
-  "Picnicbord": ignore
-  "Legeplads": ignore
-  "Borde-bænke/Picnic": ignore
-  "Tørvejrsrum/Madpakkehus": ignore
-  "Naturlegeplads": ignore
-  "Vandlegeplads": ignore
+  "Bænk": facility
+  "Picnicbord": facility
+  "Legeplads": facility
+  "Borde-bænke/Picnic": facility
+  "Tørvejrsrum/Madpakkehus": facility
+  "Naturlegeplads": facility
+  "Vandlegeplads": facility
 
-"facilit_service":
-  "Toilet": ignore
-  "Drikkevand": ignore
-  "Cykelhandler": ignore
-  "Vandpost": ignore
-  "Cykeludlejere": ignore
-  "Cykelservice": ignore
-  "Cykelpumpestation/-servicepost": ignore
-  "Turistkontor": ignore
+"facilit_service": 
+  "Toilet": facility
+  "Drikkevand": facility
+  "Cykelhandler": facility
+  "Vandpost": facility
+  "Cykeludlejere": facility
+  "Cykelservice": facility
+  "Cykelpumpestation/-servicepost": facility
+  "Turistkontor": service
 
 "land_besoegs":
-  "Museum": ignore
-  "Forlystelsespark": ignore
-  "Dyrepark, zoo": ignore
-  "Dyrepark": ignore
-  "Anden seværdighed": ignore
-  "Frilandsmuseum": ignore
-  "Aboret, blomsterpark o.l.": ignore
+  "Museum": poi
+  "Forlystelsespark": poi
+  "Dyrepark, zoo": poi
+  "Dyrepark": poi
+  "Anden seværdighed": poi
+  "Frilandsmuseum": poi
+  "Aboret, blomsterpark o.l.": poi
 
 "land_fortid":
-  "Gravhøj": ignore
-  "Vold eller voldsted": ignore
-  "Langdysse": ignore
-  "Jættestue": ignore
-  "Fortidsminde/ruin": ignore
-  "Skanse": ignore
-  "Ruin": ignore
-  "Batteri": ignore
-  "Dysse": ignore
-  "Runddysse": ignore
-  "Andet historisk anlæg": ignore
-  "Fæstningsanlæg": ignore
-  "Oldtidsvej": ignore
-  "Vikingeborg": ignore
-  "Oldtidsminde": ignore
+  "Gravhøj": poi
+  "Vold eller voldsted": poi
+  "Langdysse": poi
+  "Jættestue": poi
+  "Fortidsminde/ruin": poi
+  "Skanse": poi
+  "Ruin": poi
+  "Batteri": poi
+  "Dysse": poi
+  "Runddysse": poi
+  "Andet historisk anlæg": poi
+  "Fæstningsanlæg": poi
+  "Oldtidsvej": poi
+  "Vikingeborg": poi
+  "Oldtidsminde": poi
 
 "land_landemaerke":
-  "Kirke": ignore
-  "Fyrtårn": ignore
-  "Vejrmølle": ignore
-  "Herregård": ignore
-  "Slot": ignore
+  "Kirke": poi
+  "Fyrtårn": poi
+  "Vejrmølle": poi
+  "Herregård": poi
+  "Slot": poi
 
 "land_udflugt":
-  "Udsigtspunkt": ignore
-  "Naturområde": ignore
-  "Fugletårn/Udsigtstårn": ignore
-  "Badestrand/-sted": ignore
-  "Blå Flag strand": ignore
-  "Badepunkt": ignore
-  "Badevandsflag": ignore
+  "Udsigtspunkt": poi
+  "Naturområde": poi
+  "Fugletårn/Udsigtstårn": poi
+  "Badestrand/-sted": poi
+  "Blå Flag strand": poi
+  "Badepunkt": poi
+  "Badevandsflag": poi
