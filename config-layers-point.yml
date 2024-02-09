@@ -1,0 +1,78 @@
+"facilit_indkoeb":
+  "supermarked": ignore
+  "bager": ignore
+  "kiosk": ignore
+  "slagter": ignore
+  "Lokale smagsoplevelser": ignore
+  "tankstation": ignore
+  "fisk": ignore
+
+"facilit_overnatning":
+  "Bed & Breakfast": ignore
+  "Hotel": ignore
+  "Campingplads": ignore
+  "Slot/Herregård": ignore
+  "Vandrehjem": ignore
+  "Feriecenter": ignore
+  "Kro": ignore
+
+"facilit_rasteplads":
+  "Bænk": ignore
+  "Picnicbord": ignore
+  "Legeplads": ignore
+  "Borde-bænke/Picnic": ignore
+  "Tørvejrsrum/Madpakkehus": ignore
+  "Naturlegeplads": ignore
+  "Vandlegeplads": ignore
+
+"facilit_service":
+  "Toilet": ignore
+  "Drikkevand": ignore
+  "Cykelhandler": ignore
+  "Vandpost": ignore
+  "Cykeludlejere": ignore
+  "Cykelservice": ignore
+  "Cykelpumpestation/-servicepost": ignore
+  "Turistkontor": ignore
+
+"land_besoegs":
+  "Museum": ignore
+  "Forlystelsespark": ignore
+  "Dyrepark, zoo": ignore
+  "Dyrepark": ignore
+  "Anden seværdighed": ignore
+  "Frilandsmuseum": ignore
+  "Aboret, blomsterpark o.l.": ignore
+
+"land_fortid":
+  "Gravhøj": ignore
+  "Vold eller voldsted": ignore
+  "Langdysse": ignore
+  "Jættestue": ignore
+  "Fortidsminde/ruin": ignore
+  "Skanse": ignore
+  "Ruin": ignore
+  "Batteri": ignore
+  "Dysse": ignore
+  "Runddysse": ignore
+  "Andet historisk anlæg": ignore
+  "Fæstningsanlæg": ignore
+  "Oldtidsvej": ignore
+  "Vikingeborg": ignore
+  "Oldtidsminde": ignore
+
+"land_landemaerke":
+  "Kirke": ignore
+  "Fyrtårn": ignore
+  "Vejrmølle": ignore
+  "Herregård": ignore
+  "Slot": ignore
+
+"land_udflugt":
+  "Udsigtspunkt": ignore
+  "Naturområde": ignore
+  "Fugletårn/Udsigtstårn": ignore
+  "Badestrand/-sted": ignore
+  "Blå Flag strand": ignore
+  "Badepunkt": ignore
+  "Badevandsflag": ignore
