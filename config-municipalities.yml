@@ -1,7 +1,7 @@
 # provide a list of municipality codes for this study area
 # (see here: https://danmarksadresser.dk/adressedata/kodelister/kommunekodeliste)
 # format: 4 digits in quotation marks
-municipalities:
+kommunekode:
   # - "0147" # Frederiksberg
   # - "0151" # Ballerup
   # - "0153" # Brøndby
@@ -28,22 +28,22 @@ municipalities:
   # - "0240" # Egedal
   # - "0250" # Frederikssund
   # - "0253" # Greve
-  # - "0259" # Køge
+  - "0259" # Køge
   # - "0260" # Halsnæs
   # - "0265" # Roskilde
   # - "0269" # Solrød
   # - "0270" # Gribskov
   # - "0306" # Odsherred
   # - "0316" # Holbæk
-  # - "0320" # Faxe
+  - "0320" # Faxe
   # - "0326" # Kalundborg
-  # - "0329" # Ringsted
+  - "0329" # Ringsted
   # - "0330" # Slagelse
-  # - "0336" # Stevns
+  - "0336" # Stevns
   # - "0340" # Sorø
   # - "0350" # Lejre
   # - "0360" # Lolland
-  # - "0370" # Næstved
+  - "0370" # Næstved
   # - "0376" # Guldborgsund
   # - "0390" # Vordingborg
   # - "0400" # Bornholm
