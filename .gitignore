@@ -165,3 +165,8 @@ data/RIDA/*
 vej_type.gpkg
 vej_basislinje.gpkg
 land_ejerskab.gpkg
+
+data/DEM/*
+*.tif.aux.xml
+
+input-for-bike-node-planner/*
