@@ -18,7 +18,7 @@ if not os.path.exists(dem_output_folder):
 # input rasters
 input_path = f"../data/DEM/"
 
-output_path = dem_output_folder + "/merged_dem.tif"
+output_path = dem_output_folder + "/dem.tif"
 
 folder = Path(input_path)
 
