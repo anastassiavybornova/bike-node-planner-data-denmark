@@ -10,6 +10,10 @@ This repo contains all data and scripts necessary to _automatically_ create the 
 * Which linestring layers? (`config-layers-linestring.yml`)
 * Which polygon layers? (`config-layers-polygon.yml`)
 
-2. **Set up the code environment** 
-3. **Run the script** (`scripts/make_input.ipynb`)
+2. **Set up the code environment** (like knudepunkter)
+
+3. **Run the notebook `make_input`** (`scripts/make_input.ipynb`)
+
 4. **Data is ready** in subfolders of `/input-for-bike-node-planner/`
+
+5. Follow the steps in the [bike-node-planner repo](https://github.com/anastassiavybornova/bike-node-planner); to provide data, simply copy-paste all subfoldersof `/input-for-bike-node-planner/` (this repo) into `/data/input/` subfolder (other repo)
