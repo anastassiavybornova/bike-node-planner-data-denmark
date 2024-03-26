@@ -170,3 +170,5 @@ data/DEM/*
 *.tif.aux.xml
 
 input-for-bike-node-planner/*
+scripts/fetch_geofa.py
+scripts/make_comm.py
