@@ -4,3 +4,7 @@ proj_crs: "EPSG:25832"
 # provide token from dataforsyning
 datafordeler_username: "MAKKFGPILT"
 datafordeler_password: "Testing23!"
+
+geofa_stretches_layer_name: "fkg.t_5609_cykelknudepunktsstraekninger"
+geofa_nodes_layer_name: "fkg.t_5608_cykelknudepunkter"
+geofa_wfs_version: "2.0.0"
