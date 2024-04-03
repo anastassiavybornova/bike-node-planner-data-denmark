@@ -1,5 +1,3 @@
-# NOTE: This script will take a while
-
 # based on https://geoscripting-wur.github.io/PythonRaster/
 
 # %%
@@ -94,5 +92,3 @@ except:
 
         with open(dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb") as file:
             file.write(response.read())
-
-# %%
