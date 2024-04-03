@@ -2,11 +2,19 @@
 
 This repository contains all data and scripts necessary to _automatically_ create the input data needed for the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner) for one or several Danish municipalities.
 
-## Step 1: Install the software
+## Step 1: Software installations
 
-**TODO** installation instructions: shortened version of already existing installation instructions from bike-node-planner
+First, set up the BikeNodePlanner environment on your machine. Detailed instructions depend on your operating system:
+* [here for macOS/linux](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step01_install_software_macos.md)
+* [here for Windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step01_install_software_windows.md)
 
-## Step 2: Provide information on your study area and evaluation interests
+> Note: This step is identical to Step 1 in the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner?tab=readme-ov-file#step-1-software-installations) instructions.
+
+## Step 2: Download the contents of this repository
+
+Download the contents of this repository to your local machine. Click [here](./docs/download-repo.md) for more detailed instructions.
+
+## Step 3: Provide information on your study area and evaluation interests
 
 **Fill out the info** (currently in config files, later in a GUI):
 * Which municipalities? (`config-municipalities.yml`)
@@ -14,10 +22,10 @@ This repository contains all data and scripts necessary to _automatically_ creat
 * Which linestring layers? (`config-layers-linestring.yml`)
 * Which polygon layers? (`config-layers-polygon.yml`)
 
-## Step 3: Generate the data
+## Step 4: Generate the data
 
-**Run the notebook `make_input`** (`scripts/make_input.ipynb`) to generate the data.
+Run the notebook **`scripts/generate-input.ipynb`** to generate the data.
 
-## Step 4: Use the data
+## Step 5: Use the data
 
-After completing the steps 1-3 described above, the **data is ready** in subfolders of `/input-for-bike-node-planner/`. Follow the steps in the [bike-node-planner repo](https://github.com/anastassiavybornova/bike-node-planner) to run a complete analysis; to provide data, simply copy-paste all subfolders of `/input-for-bike-node-planner/` (this repo) into `/data/input/` subfolder (other repo).
+After completing the steps 1-3 described above, the **data is ready** in subfolders of `/input-for-bike-node-planner/`. Follow the steps in the [bike-node-planner repo](https://github.com/anastassiavybornova/bike-node-planner) to run a complete analysis; to provide data, simply copy-paste all subfolders of `/input-for-bike-node-planner/` (this repository) into `/data/input/` subfolder (other repository).
