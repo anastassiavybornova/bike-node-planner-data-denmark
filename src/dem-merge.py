@@ -14,7 +14,7 @@ if not os.path.exists(dem_output_folder):
     os.mkdir(dem_output_folder)
 
 # input rasters
-input_path = f"../data/DEM/"
+input_path = f"../data/dem/"
 
 output_path = dem_output_folder + "/dem.tif"
 
