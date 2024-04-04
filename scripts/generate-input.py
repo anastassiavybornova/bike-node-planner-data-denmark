@@ -9,9 +9,146 @@ import shutil
 import yaml
 import geopandas as gpd
 import pandas as pd
-from shapely.geometry import LineString
+from shapely.geometry import Point, LineString
 
-exec(open("../src/raw-to-processed.py").read())
+### HELPER FUNCTIONS
+
+def _drop_multiple_joins(joined_nodes):
+
+    joined_nodes.reset_index(inplace=True)
+
+    v = joined_nodes.edge_id.value_counts()
+    grouped = joined_nodes[joined_nodes.edge_id.isin(v.index[v.gt(1)])].groupby(
+        "edge_id"
+    )
+
+    drop_joined = []
+    for edge_id, g in grouped:
+        node_id = g.node_id.max()
+        drop_joined.append((edge_id, node_id))
+
+    for d in drop_joined:
+        joined_nodes.drop(
+            joined_nodes[
+                (joined_nodes.edge_id == d[0]) & (joined_nodes.node_id == d[1])
+            ].index,
+            inplace=True,
+        )
+
+    return joined_nodes
+
+
+def assign_edges_start_end_nodes(edges, nodes, max_distance=5):
+    """
+    Assign node ids of start and end nodes for edges in an edge geodataframe, based on the closest nodes in a node geodataframe
+
+    Arguments:
+        edges (gdf): network edges
+        nodes (gdf): network nodes
+
+    Returns:
+        edges (gdf): edges with u column with start node id and v column with end node id
+    """
+
+    # Extract start and end coordinates of each linestring
+    first_coord = edges.geometry.apply(lambda g: Point(g.coords[0]))
+    last_coord = edges.geometry.apply(lambda g: Point(g.coords[-1]))
+
+    # Add start and end as columns to the gdf
+    edges["start_coord"] = first_coord
+    edges["end_coord"] = last_coord
+
+    start_coords = edges[["edge_id", "start_coord"]].copy()
+    start_coords.set_geometry("start_coord", inplace=True, crs=edges.crs)
+
+    end_coords = edges[["edge_id", "end_coord"]].copy()
+    end_coords.set_geometry("end_coord", inplace=True, crs=edges.crs)
+
+    # join start and end coors to nearest node
+    start_joined = start_coords.sjoin_nearest(
+        nodes[["geometry", "node_id"]],
+        how="left",
+        distance_col="distance",
+        max_distance=max_distance,
+    )
+    end_joined = end_coords.sjoin_nearest(
+        nodes[["geometry", "node_id"]],
+        how="left",
+        distance_col="distance",
+        max_distance=max_distance,
+    )
+    start_joined = _drop_multiple_joins(start_joined)
+    end_joined = _drop_multiple_joins(end_joined)
+
+    assert len(start_joined) == len(edges)
+    assert len(end_joined) == len(edges)
+
+    edges.drop(["start_coord", "end_coord"], axis=1, inplace=True)
+
+    # Merge with edges
+    new_edges = edges.merge(
+        start_joined[["edge_id", "node_id"]], left_on="edge_id", right_on="edge_id"
+    )
+    new_edges.rename({"node_id": "u"}, inplace=True, axis=1)
+
+    new_edges = new_edges.merge(
+        end_joined[["edge_id", "node_id"]], left_on="edge_id", right_on="edge_id"
+    )
+    new_edges.rename({"node_id": "v"}, inplace=True, axis=1)
+
+    assert len(new_edges) == len(edges)
+
+    return new_edges
+
+
+def find_parallel_edges(edges):
+    """
+    Check for parallel edges in a pandas DataFrame with edges, including columns u with start node index and v with end node index.
+    If two edges have the same u-v pair, the column 'key' is updated to ensure that the u-v-key combination can uniquely identify an edge.
+    Note that (u,v) is not considered parallel to (v,u)
+
+    Arguments:
+        edges (gdf): network edges
+
+    Returns:
+        edges (gdf): edges with updated key index
+    """
+
+    # Find edges with duplicate node pairs
+    parallel = edges[edges.duplicated(subset=["u", "v"])]
+
+    edges.loc[parallel.index, "key"] = 1  # Set keys to 1
+
+    k = 1
+
+    while len(edges[edges.duplicated(subset=["u", "v", "key"])]) > 0:
+        k += 1
+
+        parallel = edges[edges.duplicated(subset=["u", "v", "key"])]
+
+        edges.loc[parallel.index, "key"] = k  # Set keys to 1
+
+    assert (
+        len(edges[edges.duplicated(subset=["u", "v", "key"])]) == 0
+    ), "Edges not uniquely indexed by u,v,key!"
+
+    edges["key"].fillna(0, inplace=True)
+
+    return edges
+
+
+def order_edge_nodes(gdf):
+
+    # gdf = gdf[gdf.u.notna() & gdf.v.notna()]
+
+    for index, row in gdf[gdf.u.notna() & gdf.v.notna()].iterrows():
+        org_u = row.u
+        org_v = row.v
+
+        gdf.loc[index, "u"] = min(org_u, org_v)
+        gdf.loc[index, "v"] = max(org_u, org_v)
+
+    return gdf
 
 # define helper function to clean data folders
 def remove_output_data(output_folders, remove_previous_output: bool = False, verbose: bool = False):
@@ -37,7 +174,6 @@ proj_crs = config["proj_crs"]
 wfs_version = config["geofa_wfs_version"]
 node_layer_name = config["geofa_nodes_layer_name"]
 stretches_layer_name = config["geofa_stretches_layer_name"]
-
 
 municipalities = yaml.load(
     open("../config-municipalities.yml"), 
@@ -79,6 +215,7 @@ print("Subfolders created...")
 # remove previous output
 remove_output_data(
     [
+        "../data/dem",
         "../input-for-bike-node-planner/dem",
         "../input-for-bike-node-planner/elevation",
         "../input-for-bike-node-planner/linestring/",
@@ -291,28 +428,3 @@ for geomtype in geomtypes:
             print("\t \t", f"No data found for {layername} layer")
     
 print("Generation of evaluation layers ended successfully...")
-
-### DOWNLOAD AND MERGE ELEVATION DATA ###
-
-remove_output_data(
-    [
-        "../data/dem", 
-        "../input-for-bike-node-planner/dem"
-    ], 
-    remove_previous_output=True
-)
-
-print("Downloading and merging elevation data. This can take up to several minutes per municipality.")
-
-exec(open("../src/dem-download.py").read())
-
-print("\t Elevation data downloaded...")
-print("\t Merging data...")
-
-exec(open("../src/dem-merge.py").read())
-
-print("Elevation data ready...")
-
-### SUCCESS MESSAGE ###
-
-print("All done! Now you can copy-paste all subfolders of '/input-for-bike-node-planner/' into the '/data/input/' folder of bike-node-planner")
