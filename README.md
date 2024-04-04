@@ -26,7 +26,7 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 
 ## Step 4: Generate the data
 
-Run the Python script **`scripts/generate-input.py`** to generate the data. [Click here](./docs/run-pyscript.md) for detailed instructions.
+Run the bash script **`scripts/run.sh`** to generate the data. [Click here](./docs/run-bashscript.md) for detailed instructions.
 
 ## Step 5: Use the data
 
