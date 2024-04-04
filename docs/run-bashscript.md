@@ -11,4 +11,4 @@ bash run.sh <qgispythonpath> <qgisprojpath>
 
 3. Once the script has successfully finished, you will see the following printout in your command line interface:
 
-<p align="center"><img alt="running the bash script" src="/docs/screenshots/bash.png" width=80%></p>
+<p align="center"><img alt="running the bash script" src="/docs/screenshots/bash.png" width=100%></p>
