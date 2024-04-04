@@ -35,11 +35,11 @@ kommunekode:
   # - "0270" # Gribskov
   # - "0306" # Odsherred
   # - "0316" # Holbæk
-  # - "0320" # Faxe
+  - "0320" # Faxe
   # - "0326" # Kalundborg
   # - "0329" # Ringsted
   # - "0330" # Slagelse
-  #  - "0336" # Stevns
+  # - "0336" # Stevns
   # - "0340" # Sorø
   # - "0350" # Lejre
   # - "0360" # Lolland
