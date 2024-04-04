@@ -14,13 +14,15 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 
 > Note: This step is identical to Step 2 in the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner?tab=readme-ov-file#step-2-software-installations) instructions.
 
-## Step 3: Provide information on your study area and evaluation interests
+## Step 3: Provide information on your study area and user-defined evaluation layers
 
-**Fill out the info** (currently in config files, later in a GUI):
-* Which municipalities? (`config-municipalities.yml`)
+**Fill out the info**:
+* Which municipalities? (`config-municipalities.yml`) 
 * Which point layers? (`config-layers-point.yml`)
 * Which linestring layers? (`config-layers-linestring.yml`)
 * Which polygon layers? (`config-layers-polygon.yml`)
+
+[Click here](./docs/define-layers.md) for detailed instructions on how to define the study area and the evaluation layers.
 
 ## Step 4: Generate the data
 
