@@ -132,7 +132,8 @@ def find_parallel_edges(edges):
         len(edges[edges.duplicated(subset=["u", "v", "key"])]) == 0
     ), "Edges not uniquely indexed by u,v,key!"
 
-    edges["key"].fillna(0, inplace=True)
+    edges["key"] = edges["key"].fillna(0)
+    edges["key"] = edges["key"].astype(int)
 
     return edges
 
