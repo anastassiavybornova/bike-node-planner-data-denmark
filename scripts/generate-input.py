@@ -198,8 +198,7 @@ os.makedirs(main_folder, exist_ok=True)
 
 sub_folders = [
     "dem",
-    "elevation",
-    "linestring",
+    # "linestring", # for future iterations
     "network",
     "point",
     "polygon",
