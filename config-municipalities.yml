@@ -35,7 +35,7 @@ kommunekode:
   # - "0270" # Gribskov
   # - "0306" # Odsherred
   # - "0316" # Holbæk
-  - "0320" # Faxe
+  # - "0320" # Faxe
   # - "0326" # Kalundborg
   # - "0329" # Ringsted
   # - "0330" # Slagelse
@@ -50,10 +50,10 @@ kommunekode:
   # - "0410" # Middelfart
   # - "0411" # Christiansø
   # - "0420" # Assens
-  #  - "0430" # Faaborg-Midtfyn
+  # - "0430" # Faaborg-Midtfyn
   # - "0440" # Kerteminde
-  #  - "0450" # Nyborg
-  #  - "0461" # Odense
+  # - "0450" # Nyborg
+  # - "0461" # Odense
   # - "0479" # Svendborg
   # - "0480" # Nordfyns
   # - "0482" # Langeland
@@ -67,10 +67,10 @@ kommunekode:
   # - "0573" # Varde
   # - "0575" # Vejen
   # - "0580" # Aabenraa
-  # - "0607" # Fredericia
-  # - "0615" # Horsens
-  # - "0621" # Kolding
-  # - "0630" # Vejle
+  - "0607" # Fredericia
+  - "0615" # Horsens
+  - "0621" # Kolding
+  - "0630" # Vejle
   # - "0657" # Herning
   # - "0661" # Holstebro
   # - "0665" # Lemvig
@@ -86,7 +86,7 @@ kommunekode:
   # - "0751" # Aarhus
   # - "0756" # Ikast-Brande
   # - "0760" # Ringkøbing-Skjern
-  # - "0766" # Hedensted
+  - "0766" # Hedensted
   # - "0773" # Morsø
   # - "0779" # Skive
   # - "0787" # Thisted
