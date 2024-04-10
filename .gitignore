@@ -172,4 +172,4 @@ data/DEM/*
 input-for-bike-node-planner/*
 scripts/fetch_geofa.py
 scripts/make_comm.py
-config-layers-linestring.yml # to be added at a later stage
+config-layers-linestring.yml
