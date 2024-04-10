@@ -19,7 +19,7 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 **Fill out the info**:
 * Which municipalities? (`config-municipalities.yml`) 
 * Which point layers? (`config-layers-point.yml`)
-* Which linestring layers? (`config-layers-linestring.yml`)
+<!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
 * Which polygon layers? (`config-layers-polygon.yml`)
 
 [Click here](./docs/define-layers.md) for detailed instructions on how to define the study area and the evaluation layers.
