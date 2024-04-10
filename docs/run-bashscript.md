@@ -5,7 +5,10 @@
 ```
 bash run.sh <qgispythonpath> <qgisprojpath>
 ```
-`<qgispythonpath>` is the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)). `<qgisprojpath>` is the path to the folder of your  QGIS installation files in which the file `proj.db` is located (to determine the location of `proj.db`, navigate to your QGIS installation files in your file explorer, then search for `proj.db`). See an example (for MacOS) in the screenshot below.
+
+➡️ `<qgispythonpath>` is the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)). 
+
+➡️ `<qgisprojpath>` is the path to the folder of your  QGIS installation files in which the file `proj.db` is located (to determine the location of `proj.db`, navigate to your QGIS installation files in your file explorer, then search for `proj.db`). See an example (for MacOS) in the screenshot below.
 
 > **Note** that depending on the size and number of municipalities in your study area, running the bash script can take several minutes. Status messages will be printed out as the script runs (see screenshot below).
 
