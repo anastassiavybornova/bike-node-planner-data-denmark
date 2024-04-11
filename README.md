@@ -9,6 +9,7 @@ Download the contents of this repository to your local machine. Click [here](./d
 ## Step 2: Software installations
 
 First, set up the BikeNodePlanner environment on your machine. Detailed instructions depend on your operating system:
+
 * [here for macOS/linux](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_macos.md)
 * [here for Windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_windows.md)
 
@@ -17,12 +18,14 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 ## Step 3: Provide information on your study area and user-defined evaluation layers
 
 **Fill out the info**:
-* Which municipalities? (`config-municipalities.yml`) 
+
+* Data download (`config.yml`)
+* Which municipalities? (`config-municipalities.yml`)
 * Which point layers? (`config-layers-point.yml`)
 <!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
 * Which polygon layers? (`config-layers-polygon.yml`)
 
-[Click here](./docs/define-layers.md) for detailed instructions on how to define the study area and the evaluation layers.
+[Click here](./docs/define-layers.md) for detailed instructions on how to define data download settings, the study area, and the evaluation layers.
 
 ## Step 4: Generate the data
 
