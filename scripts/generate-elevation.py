@@ -14,7 +14,9 @@ from osgeo import gdal
 gdal.UseExceptions()
 
 # start download workflow
-print("Downloading and merging elevation data. This can take up to several minutes per municipality.")
+print(
+    "Downloading and merging elevation data. This can take up to several minutes per municipality."
+)
 # based on https://geoscripting-wur.github.io/PythonRaster/
 
 # load configs
@@ -33,7 +35,7 @@ if not os.path.exists(dem_intermediate_folder):
     os.mkdir(dem_intermediate_folder)
 
 sa = gpd.read_file(studyarea_fp)
-assert sa.crs == proj_crs
+assert sa.crs == proj_crs, "Study area crs must be the same as the project crs"
 
 # Access the WCS by proving the url and optional arguments
 wcs = WebCoverageService(
@@ -49,8 +51,8 @@ resy = 10
 width = int(size / resx)  # dimensions of tif
 height = int(size / resy)
 
-assert width < 10000  # max size allowed
-assert height < 10000
+assert width < 10000, "width is too large"  # max size allowed
+assert height < 10000, "height is too large"  # max size allowed
 
 xmin, ymin, xmax, ymax = sa.total_bounds
 
@@ -63,7 +65,7 @@ for x in cols:
         box = (x, y, x + size, y + size)
         bboxes.append(box)
 
-assert len(bboxes) == len(cols) * len(rows)
+assert len(bboxes) == len(cols) * len(rows), "Error in generation of bounding boxes"
 
 
 try:
