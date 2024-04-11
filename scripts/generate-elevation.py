@@ -5,16 +5,12 @@ import os
 import yaml
 import geopandas as gpd
 import numpy as np
-
 from pathlib import Path
-
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
-
+gdal.UseExceptions()
 import warnings
 warnings.filterwarnings('ignore')
-
-gdal.UseExceptions()
 
 # start download workflow
 print("Downloading and merging elevation data. This can take up to several minutes per municipality.")
@@ -132,4 +128,9 @@ vrt = gdal.BuildVRT(vrt_path, l)
 
 gdal.Translate(output_path, vrt, format="GTiff")
 
-print("Elevation data ready...")
+if os.path.exists(output_path):
+    print("Elevation data ready...")
+else:
+    print("****** ERROR WHEN MERGING ELEVATION DATA ******")
+    print("Elevation data failed to merge! Please rerun the script or provide the dem.tif file manually")
+    print("***********************************************")
