@@ -11,6 +11,9 @@ from pathlib import Path
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
 
+import warnings
+warnings.filterwarnings('ignore')
+
 gdal.UseExceptions()
 
 # start download workflow

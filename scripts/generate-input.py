@@ -10,6 +10,8 @@ import yaml
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, LineString
+import warnings
+warnings.filterwarnings('ignore')
 
 ### HELPER FUNCTIONS
 
