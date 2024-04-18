@@ -15,6 +15,7 @@ warnings.filterwarnings('ignore')
 
 ### HELPER FUNCTIONS
 
+
 def _drop_multiple_joins(joined_nodes):
 
     joined_nodes.reset_index(inplace=True)
@@ -82,8 +83,8 @@ def assign_edges_start_end_nodes(edges, nodes, max_distance=5):
     start_joined = _drop_multiple_joins(start_joined)
     end_joined = _drop_multiple_joins(end_joined)
 
-    assert len(start_joined) == len(edges)
-    assert len(end_joined) == len(edges)
+    assert len(start_joined) == len(edges), "Not all edges have a start node"
+    assert len(end_joined) == len(edges), "Not all edges have an end node"
 
     edges.drop(["start_coord", "end_coord"], axis=1, inplace=True)
 
@@ -98,7 +99,9 @@ def assign_edges_start_end_nodes(edges, nodes, max_distance=5):
     )
     new_edges.rename({"node_id": "v"}, inplace=True, axis=1)
 
-    assert len(new_edges) == len(edges)
+    assert len(new_edges) == len(
+        edges
+    ), "New edges geodataframe does not have the same length as the input edges geodataframe"
 
     return new_edges
 
@@ -153,8 +156,11 @@ def order_edge_nodes(gdf):
 
     return gdf
 
+
 # define helper function to clean data folders
-def remove_output_data(output_folders, remove_previous_output: bool = False, verbose: bool = False):
+def remove_output_data(
+    output_folders, remove_previous_output: bool = False, verbose: bool = False
+):
 
     if remove_previous_output:
         for f in output_folders:
@@ -165,31 +171,28 @@ def remove_output_data(output_folders, remove_previous_output: bool = False, ver
     if verbose:
         print("Data folder cleaned...")
 
+
 print("Libraries and functions imported...")
 
 ### IMPORT CONFIGURATIONS ###
 
 # read config files
-config = yaml.load(
-    open("../config.yml"), 
-    Loader=yaml.FullLoader)
+config = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
 proj_crs = config["proj_crs"]
 wfs_version = config["geofa_wfs_version"]
 node_layer_name = config["geofa_nodes_layer_name"]
 stretches_layer_name = config["geofa_stretches_layer_name"]
 
-municipalities = yaml.load(
-    open("../config-municipalities.yml"), 
-    Loader=yaml.FullLoader)
+municipalities = yaml.load(open("../config-municipalities.yml"), Loader=yaml.FullLoader)
 codes = municipalities["kommunekode"]
 
 geomtypes = ["point", "linestring", "polygon"]
 config_layers = {}
 for geomtype in geomtypes:
     config_layers[geomtype] = yaml.load(
-        open(f"../config-layers-{geomtype}.yml"), 
-        Loader=yaml.FullLoader)
-    
+        open(f"../config-layers-{geomtype}.yml"), Loader=yaml.FullLoader
+    )
+
 print("Configurations imported...")
 
 ### CREATE SUBFOLDERS ###
@@ -204,7 +207,7 @@ sub_folders = [
     "network",
     "point",
     "polygon",
-    "studyarea"
+    "studyarea",
 ]
 
 for sub_folder in sub_folders:
@@ -223,28 +226,25 @@ remove_output_data(
         "../input-for-bike-node-planner/network/",
         "../input-for-bike-node-planner/point/",
         "../input-for-bike-node-planner/polygon/",
-        "../input-for-bike-node-planner/studyarea/"        
+        "../input-for-bike-node-planner/studyarea/",
     ],
     remove_previous_output=True,
-    verbose=True
+    verbose=True,
 )
 
 ### CREATE STUDY AREA POLYGON ###
 
 ### read in municipality boundaries & create study area polygon
 gdf = gpd.read_file("../data/municipality-boundaries/municipality-boundaries.gpkg")
-gdf = gdf.to_crs(proj_crs) # make sure we have the right projected CRS
-gdf = gdf[gdf["kommunekode"].isin(codes)] # filter to municipality codes indicated in config file
+gdf = gdf.to_crs(proj_crs)  # make sure we have the right projected CRS
+gdf = gdf[
+    gdf["kommunekode"].isin(codes)
+]  # filter to municipality codes indicated in config file
 
-gdf_studyarea = gpd.GeoDataFrame(
-    {
-        "geometry": [gdf.unary_union]
-    },
-    crs = proj_crs
-)
+gdf_studyarea = gpd.GeoDataFrame({"geometry": [gdf.unary_union]}, crs=proj_crs)
 gdf_studyarea.to_file(
-    filename = "../input-for-bike-node-planner/studyarea/studyarea.gpkg", 
-    index = False)
+    filename="../input-for-bike-node-planner/studyarea/studyarea.gpkg", index=False
+)
 print(f"Study area polygon created for municipalities: {codes}...")
 del gdf
 
@@ -267,8 +267,12 @@ assert len(knudepunkter) > 0, "No nodes found"
 assert len(straekninger) > 0, "No stretches found"
 
 # limit to extent of study area
-assert straekninger.crs == gdf_studyarea.crs
-assert knudepunkter.crs == gdf_studyarea.crs
+assert (
+    straekninger.crs == gdf_studyarea.crs
+), "Crs of straekninger does not match crs of study area"
+assert (
+    knudepunkter.crs == gdf_studyarea.crs
+), "Crs of knudepunkter does not match crs of study area"
 
 edges_studyarea = straekninger.sjoin(gdf_studyarea, predicate="intersects").copy()
 edges_studyarea.drop(columns=["index_right"], inplace=True)
@@ -284,19 +288,20 @@ nodes_studyarea = nodes_studyarea[nodes_studyarea.geometry.notna()].reset_index(
 
 # assert there is one (and only one) LineString per edge geometry row
 nodes_studyarea = nodes_studyarea.explode(index_parts=False).reset_index(drop=True)
-assert all(nodes_studyarea.geometry.type == "Point")
-assert all(nodes_studyarea.geometry.is_valid)
+assert all(
+    nodes_studyarea.geometry.type == "Point"
+), "Not all node geometries are Points"
+assert all(nodes_studyarea.geometry.is_valid), "Not all node geometries are valid"
 
 # assert there is one (and only one) Point per node geometry row
 edges_studyarea = edges_studyarea.explode(index_parts=False).reset_index(drop=True)
-assert all(edges_studyarea.geometry.type == "LineString")
-assert all(edges_studyarea.geometry.is_valid)
+assert all(
+    edges_studyarea.geometry.type == "LineString"
+), "Not all edge geometries are LineStrings"
+assert all(edges_studyarea.geometry.is_valid), "Not all edge geometries are valid"
 
 # save
-os.makedirs(
-    "../input-for-bike-node-planner/network/raw/", 
-    exist_ok = True
-)
+os.makedirs("../input-for-bike-node-planner/network/raw/", exist_ok=True)
 
 edges_studyarea.to_file(
     "../input-for-bike-node-planner/network/raw/edges.gpkg", index=False
@@ -311,10 +316,14 @@ print("Raw data on nodes and edges for study area fetched and saved...")
 ### PROCESS (CLEAN) AND SAVE NETWORK DATA ###
 
 edges_studyarea["edge_id"] = edges_studyarea.id_cykelknudepunktsstraekning
-assert len(edges_studyarea) == len(edges_studyarea["edge_id"].unique())
+assert len(edges_studyarea) == len(
+    edges_studyarea["edge_id"].unique()
+), "Edge ids are not unique"
 
 nodes_studyarea["node_id"] = nodes_studyarea.id_cykelknudepkt
-assert len(nodes_studyarea) == len(nodes_studyarea["node_id"].unique())
+assert len(nodes_studyarea) == len(
+    nodes_studyarea["node_id"].unique()
+), "Node ids are not unique"
 
 processed_edges = assign_edges_start_end_nodes(edges_studyarea, nodes_studyarea)
 
@@ -322,7 +331,9 @@ processed_edges = order_edge_nodes(processed_edges)
 
 processed_edges = find_parallel_edges(processed_edges)
 
-assert len(processed_edges) == len(edges_studyarea)
+assert len(processed_edges) == len(
+    edges_studyarea
+), "The number of edges has changed (processed_edges not same length as edges_studyarea)"
 
 processed_nodes = nodes_studyarea.loc[
     nodes_studyarea["node_id"].isin(processed_edges["u"])
@@ -330,10 +341,7 @@ processed_nodes = nodes_studyarea.loc[
 ]
 
 # save to files
-os.makedirs(
-    "../input-for-bike-node-planner/network/processed/",
-    exist_ok=True
-)
+os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
 
 processed_nodes.to_file(
     "../input-for-bike-node-planner/network/processed/nodes.gpkg", index=False
@@ -360,18 +368,18 @@ for geomtype in geomtypes:
     for v in config_layers[geomtype].values():
         layers += list(set(v.values()))
     layers = list(set(layers))
-    
+
     # determine data sets that go into each layer
 
-    # key is name of merged output layer, value is a dict 
+    # key is name of merged output layer, value is a dict
     for layer in layers:
         layer_dict[geomtype][layer] = {}
-    
+
     # adding data source as key to dictindict IF relevant to layer
     for datasource, vdict in config_layers[geomtype].items():
-        for layer in (set(vdict.values())):
+        for layer in set(vdict.values()):
             layer_dict[geomtype][layer][datasource] = []
-    
+
     for datasource, vdict in config_layers[geomtype].items():
         for k, v in vdict.items():
             layer_dict[geomtype][v][datasource] += [k]
@@ -385,12 +393,12 @@ for geomtype in geomtypes:
 print("Generation of evaluation layers started...")
 
 for geomtype in geomtypes:
-    
-    # go through all evaluation layers for that geomtype... 
+
+    # go through all evaluation layers for that geomtype...
     for layername, datadict in layer_dict[geomtype].items():
-    
+
         final_gdf = gpd.GeoDataFrame()
-        
+
         # go through each data source for that evaluation layer...
         for k, v in datadict.items():
 
@@ -403,32 +411,22 @@ for geomtype in geomtypes:
                 if os.path.exists(fp):
                     gdf_muni = gpd.read_file(fp)
                     if not gdf_muni.empty:
-                        gdf = pd.concat(
-                            [
-                                gdf,
-                                gdf_muni
-                            ]
-                        )
+                        gdf = pd.concat([gdf, gdf_muni])
 
             # if at least one of the municipalities has data from this data source,
             # add it to final gdf
             if not gdf.empty:
-                final_gdf = pd.concat(
-                    [
-                        final_gdf,
-                        gdf[gdf["type"].isin(v)]
-                    ]
-                )
+                final_gdf = pd.concat([final_gdf, gdf[gdf["type"].isin(v)]])
 
         # save evaluation layer to file, if not empty
         if not final_gdf.empty:
             final_gdf = final_gdf.reset_index(drop=True)
             final_gdf.to_file(
-                f"../input-for-bike-node-planner/{geomtype}/{layername}.gpkg", 
-                index = False
+                f"../input-for-bike-node-planner/{geomtype}/{layername}.gpkg",
+                index=False,
             )
             print("\t \t", f"{layername} layer saved")
         else:
             print("\t \t", f"No data found for {layername} layer")
-    
+
 print("Generation of evaluation layers ended successfully...")

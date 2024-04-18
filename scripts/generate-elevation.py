@@ -12,125 +12,132 @@ gdal.UseExceptions()
 import warnings
 warnings.filterwarnings('ignore')
 
-# start download workflow
-print("Downloading and merging elevation data. This can take up to several minutes per municipality.")
-# based on https://geoscripting-wur.github.io/PythonRaster/
-
 # load configs
 configs = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
 proj_crs = configs["proj_crs"]
 datafordeler_username = configs["datafordeler_username"]
 datafordeler_password = configs["datafordeler_password"]
+download_elevation_data = configs["download_elevation_data"]
 
-studyarea_fp = "../input-for-bike-node-planner/studyarea/studyarea.gpkg"
+if download_elevation_data == True:
 
-wcs_url = f"https://services.datafordeler.dk/DHMNedboer/dhm_wcs/1.0.0/WCS?username={datafordeler_username}&password={datafordeler_password}&service=WCS&request=GetCapabilities"
+    # start download workflow
+    print(
+        "Downloading and merging elevation data. This can take up to several minutes per municipality."
+    )
+    # based on https://geoscripting-wur.github.io/PythonRaster/
 
-dem_intermediate_folder = "../data/DEM"
+    studyarea_fp = "../input-for-bike-node-planner/studyarea/studyarea.gpkg"
 
-if not os.path.exists(dem_intermediate_folder):
-    os.mkdir(dem_intermediate_folder)
+    wcs_url = f"https://services.datafordeler.dk/DHMNedboer/dhm_wcs/1.0.0/WCS?username={datafordeler_username}&password={datafordeler_password}&service=WCS&request=GetCapabilities"
 
-sa = gpd.read_file(studyarea_fp)
-assert sa.crs == proj_crs
+    dem_intermediate_folder = "../data/DEM"
 
-# Access the WCS by proving the url and optional arguments
-wcs = WebCoverageService(
-    "https://services.datafordeler.dk/DHMNedboer/dhm_wcs/1.0.0/WCS?username=MAKKFGPILT&password=Testing23!&service=WCS&request=GetCapabilities",
-    version="1.0.0",
-)
+    if not os.path.exists(dem_intermediate_folder):
+        os.mkdir(dem_intermediate_folder)
 
-coverage_name = "dhm_terraen"
+    sa = gpd.read_file(studyarea_fp)
+    assert sa.crs == proj_crs, "Study area crs must be the same as the project crs"
 
-size = 5000  # dimensions km
-resx = 10  # pixel size
-resy = 10
-width = int(size / resx)  # dimensions of tif
-height = int(size / resy)
+    # Access the WCS by proving the url and optional arguments
+    wcs = WebCoverageService(
+        "https://services.datafordeler.dk/DHMNedboer/dhm_wcs/1.0.0/WCS?username=MAKKFGPILT&password=Testing23!&service=WCS&request=GetCapabilities",
+        version="1.0.0",
+    )
 
-assert width < 10000  # max size allowed
-assert height < 10000
+    coverage_name = "dhm_terraen"
 
-xmin, ymin, xmax, ymax = sa.total_bounds
+    size = 5000  # dimensions km
+    resx = 10  # pixel size
+    resy = 10
+    width = int(size / resx)  # dimensions of tif
+    height = int(size / resy)
 
-cols = list(np.arange(xmin, xmax + size, size))
-rows = list(np.arange(ymin, ymax + size, size))
-bboxes = []
+    assert width < 10000, "width is too large"  # max size allowed
+    assert height < 10000, "height is too large"  # max size allowed
 
-for x in cols:
-    for y in rows:
-        box = (x, y, x + size, y + size)
-        bboxes.append(box)
+    xmin, ymin, xmax, ymax = sa.total_bounds
 
-assert len(bboxes) == len(cols) * len(rows)
+    cols = list(np.arange(xmin, xmax + size, size))
+    rows = list(np.arange(ymin, ymax + size, size))
+    bboxes = []
 
+    for x in cols:
+        for y in rows:
+            box = (x, y, x + size, y + size)
+            bboxes.append(box)
 
-try:
-    for i, bbox in enumerate(bboxes):
-        # Request the DSM data from the WCS
-        response = wcs.getCoverage(
-            identifier=coverage_name,
-            bbox=bbox,
-            format="GTiff",
-            crs=f"urn:ogc:def:crs:{proj_crs}",
-            resx=0.4,
-            resy=0.4,
-            width=width,
-            height=height,
-        )
+    assert len(bboxes) == len(cols) * len(rows), "Error in generation of bounding boxes"
 
-        with open(dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb") as file:
-            file.write(response.read())
+    try:
+        for i, bbox in enumerate(bboxes):
+            # Request the DSM data from the WCS
+            response = wcs.getCoverage(
+                identifier=coverage_name,
+                bbox=bbox,
+                format="GTiff",
+                crs=f"urn:ogc:def:crs:{proj_crs}",
+                resx=0.4,
+                resy=0.4,
+                width=width,
+                height=height,
+            )
 
-except:
-    i = i - 1
+            with open(
+                dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+            ) as file:
+                file.write(response.read())
 
-    for i, bbox in enumerate(bboxes[i:]):
-        # Request the DSM data from the WCS
-        response = wcs.getCoverage(
-            identifier=coverage_name,
-            bbox=bbox,
-            format="GTiff",
-            crs=f"urn:ogc:def:crs:{proj_crs}",
-            resx=0.4,
-            resy=0.4,
-            width=width,
-            height=height,
-        )
+    except:
+        i = i - 1
 
-        with open(dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb") as file:
-            file.write(response.read())
+        for i, bbox in enumerate(bboxes[i:]):
+            # Request the DSM data from the WCS
+            response = wcs.getCoverage(
+                identifier=coverage_name,
+                bbox=bbox,
+                format="GTiff",
+                crs=f"urn:ogc:def:crs:{proj_crs}",
+                resx=0.4,
+                resy=0.4,
+                width=width,
+                height=height,
+            )
 
-print("\t Elevation data downloaded...")
-print("\t Merging data...")
+            with open(
+                dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+            ) as file:
+                file.write(response.read())
 
-# from https://www.giscourse.com/automatically-merge-raster-files-using-pyqgis/
-dem_output_folder = "../input-for-bike-node-planner/dem"
+    print("\t Elevation data downloaded...")
+    print("\t Merging data...")
 
-if not os.path.exists(dem_output_folder):
-    os.mkdir(dem_output_folder)
+    # from https://www.giscourse.com/automatically-merge-raster-files-using-pyqgis/
+    dem_output_folder = "../input-for-bike-node-planner/dem"
 
-# input rasters
-input_path = f"../data/dem/"
+    if not os.path.exists(dem_output_folder):
+        os.mkdir(dem_output_folder)
 
-output_path = dem_output_folder + "/dem.tif"
+    # input rasters
+    input_path = f"../data/dem/"
 
-folder = Path(input_path)
+    output_path = dem_output_folder + "/dem.tif"
 
-l = []
+    folder = Path(input_path)
 
-for f in folder.glob("**/*.tif"):
-    f_path = f.as_posix()
-    l.append(f_path)
+    l = []
 
-vrt_path = os.path.join(input_path, "prov_vrt.vrt")
-vrt = gdal.BuildVRT(vrt_path, l)
+    for f in folder.glob("**/*.tif"):
+        f_path = f.as_posix()
+        l.append(f_path)
 
-gdal.Translate(output_path, vrt, format="GTiff")
+    vrt_path = os.path.join(input_path, "prov_vrt.vrt")
+    vrt = gdal.BuildVRT(vrt_path, l)
 
-if os.path.exists(output_path):
+    gdal.Translate(output_path, vrt, format="GTiff")
+
     print("Elevation data ready...")
 else:
-    print("****** ERROR WHEN MERGING ELEVATION DATA ******")
-    print("Elevation data failed to merge! Please rerun the script or provide the dem.tif file manually")
-    print("***********************************************")
+    print(
+        "Elevation data download is disabled in the config file. Please provide your own elevation raster."
+    )
