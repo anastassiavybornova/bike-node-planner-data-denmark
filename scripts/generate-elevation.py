@@ -5,13 +5,12 @@ import os
 import yaml
 import geopandas as gpd
 import numpy as np
-
 from pathlib import Path
-
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
-
 gdal.UseExceptions()
+import warnings
+warnings.filterwarnings('ignore')
 
 # load configs
 configs = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)

@@ -10,6 +10,8 @@ import yaml
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, LineString
+import warnings
+warnings.filterwarnings('ignore')
 
 ### HELPER FUNCTIONS
 
@@ -220,8 +222,7 @@ remove_output_data(
     [
         "../data/dem",
         "../input-for-bike-node-planner/dem",
-        "../input-for-bike-node-planner/elevation",
-        "../input-for-bike-node-planner/linestring/",
+        #"../input-for-bike-node-planner/linestring/", # to be implemented
         "../input-for-bike-node-planner/network/",
         "../input-for-bike-node-planner/point/",
         "../input-for-bike-node-planner/polygon/",
@@ -251,13 +252,16 @@ del gdf
 
 # Fetch input data from GeoFA (raw data)
 
-url = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={node_layer_name}&service=WFS&version={wfs_version}"
+url_knudepunkter = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={node_layer_name}&service=WFS&version={wfs_version}"
+url_straekninger = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={stretches_layer_name}&service=WFS&version={wfs_version}"
 
-knudepunkter = gpd.read_file(url)
-
-url = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={stretches_layer_name}&service=WFS&version={wfs_version}"
-
-straekninger = gpd.read_file(url)
+try:
+    knudepunkter = gpd.read_file(url_knudepunkter)
+    straekninger = gpd.read_file(url_straekninger)
+    print("GeoFA data fetched successfully.")
+except:
+    print("Error when fetching GeoFA data. Exiting... Please rerun the script!")
+    exit()
 
 assert len(knudepunkter) > 0, "No nodes found"
 assert len(straekninger) > 0, "No stretches found"
