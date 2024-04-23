@@ -1,17 +1,20 @@
 # Step 3: Provide information on your study area and user-defined evaluation layers
 
-In this step, you can customize the input data generation by selecting which municipalities to include in the analysis; which point/linestring/polygon data to include in the evaluation; and how to merge them into broader evaluation categories. You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
+In this step, you can customize the input data generation by selecting whether to download elevation data (or provide your own); which municipalities to include in the analysis; which point/polygon data to include in the evaluation; and how to merge the data into broader evaluation categories. 
 
-## Settings for data download
+You do so by editing the four `.yml` files in the main folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
 
-* Here you can provide the settings for data download and preprocessing (name of data layers in GeoFA, etc.)
+## Settings for data download (`config.yml`)
+
+Here you can provide the settings for data download and preprocessing (name of data layers in GeoFA, etc.)
 
 The workflow includes a script that downloads elevation data from [Dataforsyningen](https://dataforsyningen.dk/).
-To use this step, the setting `download_elevation_data` must be set to True (the default) *and* you must provide your username and password to Dataforsyningen.
+To use this step, the setting `download_elevation_data` must be set to `True` (the default) *and* you must provide your username (at `datafordeler_username`) and password (at `datafordeler_password`) to Dataforsyningen.
 
-**If** you already have an elevation raster (DEM) for the study area:
-* Set the `download_elevation_data` to False. 
-* After completing step 1-4 in the README.MD, place your DEM file in `/input-for-bike-node-planner/`dem/ and name the file `dem.tif`.
+**If you already have an elevation raster (DEM) for the study area:**
+1. First, in the `config.yml` file, set `download_elevation_data` to `False`. 
+2. Next, complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
+3. Lastly, place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
 
 ## Which municipalities? (`config-municipalities.yml`)
 
