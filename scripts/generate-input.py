@@ -186,7 +186,12 @@ stretches_layer_name = config["geofa_stretches_layer_name"]
 municipalities = yaml.load(open("../config-municipalities.yml"), Loader=yaml.FullLoader)
 codes = municipalities["kommunekode"]
 
-geomtypes = ["point", "linestring", "polygon"]
+geomtypes = [
+    "point", 
+    # "linestring", # tbi
+    "polygon"
+]
+
 config_layers = {}
 for geomtype in geomtypes:
     config_layers[geomtype] = yaml.load(
