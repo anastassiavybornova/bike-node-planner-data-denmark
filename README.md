@@ -4,14 +4,14 @@ This repository contains all data and scripts necessary to _automatically_ creat
 
 ## Step 1: Download the contents of this repository
 
-Download the contents of this repository to your local machine. Click [here](./docs/download-repo.md) for more detailed instructions.
+Download the contents of this repository to your local machine. Click [./docs/download-repo.md](./docs/download-repo.md) for more detailed instructions.
 
 ## Step 2: Software installations
 
 First, set up the BikeNodePlanner environment on your machine. Detailed instructions depend on your operating system:
 
-* [here for macOS/linux](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_macos.md)
-* [here for Windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_windows.md)
+* [macOS/linux: step02_install_software_macos](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_macos.md)
+* [Windows: step02_install_software_windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_windows.md)
 
 > Note: This step is identical to Step 2 in the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner?tab=readme-ov-file#step-2-software-installations) instructions.
 
@@ -27,11 +27,11 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 
 All config files can be found in the `config` folder.
 
-[Click here](./docs/define-layers.md) for detailed instructions on how to define data download settings, the study area, and the evaluation layers.
+Go to [./docs/define-layers.md](./docs/define-layers.md) for detailed instructions on how to define data download settings, the study area, and the evaluation layers.
 
 ## Step 4: Generate the data
 
-Run the bash script **`scripts/run.sh`** to generate the data. [Click here](./docs/run-bashscript.md) for detailed instructions.
+Run the bash script **`scripts/run.sh`** to generate the data. Go to [./docs/run-bashscript.md](./docs/run-bashscript.md) for detailed instructions.
 
 ## Step 5: Use the data
 
