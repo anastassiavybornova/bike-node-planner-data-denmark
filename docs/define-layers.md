@@ -12,9 +12,10 @@ The workflow includes a script that downloads elevation data from [Dataforsyning
 To use this step, the setting `download_elevation_data` must be set to `True` (the default) *and* you must provide your username (at `datafordeler_username`) and password (at `datafordeler_password`) to Dataforsyningen.
 
 **If you already have an elevation raster (DEM) for the study area:**
-1. First, in the `config.yml` file, set `download_elevation_data` to `False`. 
-2. Next, complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
-3. Lastly, place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
+
+1. In the `config.yml` file, set `download_elevation_data` to `False`. 
+2. Complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
+3. Place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
 
 ## Which municipalities? (`config-municipalities.yml`)
 
