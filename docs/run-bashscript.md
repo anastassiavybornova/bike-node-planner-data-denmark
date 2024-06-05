@@ -1,12 +1,13 @@
 # Run the bash script `scripts/run.sh`
 
 1. Open your command line interface (on Windows: Command Prompt; on MacOS/Linux: Terminal). In the command line interface, navigate to the subfolder `scripts`, located in main folder of this repository, which you downloaded in [Step 01](../README.md#step-1-download-the-contents-of-this-repository) (`bike-node-planner-data-denmark-main/scripts/`)
-2. Run the following command, replacing `<qgispythonpath>` and `<qgisprojpath>` as described below: 
-```
+2. Run the following command, replacing `<qgispythonpath>` and `<qgisprojpath>` as described below:
+
+```bash
 bash run.sh <qgispythonpath> <qgisprojpath>
 ```
 
-➡️ `<qgispythonpath>` is the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)). 
+➡️ `<qgispythonpath>` is the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)).
 
 ➡️ `<qgisprojpath>` is the path to the folder of your QGIS installation in which the file `proj.db` is located. To determine the location of `proj.db`:
 
