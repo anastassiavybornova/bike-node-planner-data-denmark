@@ -1,8 +1,8 @@
 # Step 3: Provide information on your study area and user-defined evaluation layers
 
-In this step, you can customize the input data generation by selecting whether to download elevation data (or provide your own); which municipalities to include in the analysis; which point/polygon data to include in the evaluation; and how to merge the data into broader evaluation categories. 
+In this step, you can customize the input data generation by selecting whether to download elevation data (or provide your own); which municipalities to include in the analysis; which point/polygon data to include in the evaluation; and how to merge the data into broader evaluation categories.
 
-You do so by editing the four `.yml` files in the main folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
+You do so by editing the four `.yml` files in the config folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
 
 ## Settings for data download (`config.yml`)
 

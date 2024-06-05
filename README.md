@@ -25,6 +25,8 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 <!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
 * Which polygon layers? (`config-layers-polygon.yml`)
 
+All config files can be found in the `config` folder.
+
 [Click here](./docs/define-layers.md) for detailed instructions on how to define data download settings, the study area, and the evaluation layers.
 
 ## Step 4: Generate the data

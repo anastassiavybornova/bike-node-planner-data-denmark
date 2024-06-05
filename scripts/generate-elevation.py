@@ -8,12 +8,14 @@ import numpy as np
 from pathlib import Path
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
+
 gdal.UseExceptions()
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 # load configs
-configs = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
+configs = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
 proj_crs = configs["proj_crs"]
 datafordeler_username = configs["datafordeler_username"]
 datafordeler_password = configs["datafordeler_password"]
