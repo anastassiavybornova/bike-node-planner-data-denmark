@@ -25,7 +25,7 @@ For each municipality that you want to be included in the analysis, delete the l
 
 ## Which point layers? (`config-layers-point.yml`)
 
-In the file, you will find a list of categories and subcategories of point data.
+In the `config-layers-point.yml`, you will find a list of categories and subcategories of point data.
 
 ✅ You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name.
 
@@ -48,12 +48,12 @@ In the example below, the main category is `facilit_indkoeb`:
 <!-- 
 ## Which linestring layers? (`config-layers-linestring.yml`)
 
-In the file, you will find a list of categories and subcategories of linestring data. You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name. You can also choose subcategories to be excluded from the evaluation by typing `ignore` next to the subcategory name. Note that the evaluation layer names are case-sensitive. In the example below, ... [insert screentshot]
+In the `config-layers-linestring.yml`, you will find a list of categories and subcategories of linestring data. You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name. You can also choose subcategories to be excluded from the evaluation by typing `ignore` next to the subcategory name. Note that the evaluation layer names are case-sensitive. In the example below, ... [insert screentshot]
 -->
 
 ## Which polygon layers? (`config-layers-polygon.yml`)
 
-In the file, you will likewise find a list of categories and subcategories of polygon data.
+In the `config-layers-polygon.yml`, you will likewise find a list of categories and subcategories of polygon data.
 
 ✅ You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name.
 
