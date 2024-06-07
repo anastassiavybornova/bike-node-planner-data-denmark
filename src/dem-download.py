@@ -8,7 +8,7 @@ import numpy as np
 import yaml
 
 # load configs
-configs = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
+configs = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
 proj_crs = configs["proj_crs"]
 datafordeler_username = configs["datafordeler_username"]
 datafordeler_password = configs["datafordeler_password"]

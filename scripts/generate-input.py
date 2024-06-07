@@ -11,7 +11,8 @@ import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, LineString
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 ### HELPER FUNCTIONS
 
@@ -177,25 +178,27 @@ print("Libraries and functions imported...")
 ### IMPORT CONFIGURATIONS ###
 
 # read config files
-config = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
+config = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
 proj_crs = config["proj_crs"]
 wfs_version = config["geofa_wfs_version"]
 node_layer_name = config["geofa_nodes_layer_name"]
 stretches_layer_name = config["geofa_stretches_layer_name"]
 
-municipalities = yaml.load(open("../config-municipalities.yml"), Loader=yaml.FullLoader)
+municipalities = yaml.load(
+    open("../config/config-municipalities.yml"), Loader=yaml.FullLoader
+)
 codes = municipalities["kommunekode"]
 
 geomtypes = [
-    "point", 
+    "point",
     # "linestring", # tbi
-    "polygon"
+    "polygon",
 ]
 
 config_layers = {}
 for geomtype in geomtypes:
     config_layers[geomtype] = yaml.load(
-        open(f"../config-layers-{geomtype}.yml"), Loader=yaml.FullLoader
+        open(f"../config/config-layers-{geomtype}.yml"), Loader=yaml.FullLoader
     )
 
 print("Configurations imported...")
@@ -227,7 +230,7 @@ remove_output_data(
     [
         "../data/dem",
         "../input-for-bike-node-planner/dem",
-        #"../input-for-bike-node-planner/linestring/", # to be implemented
+        # "../input-for-bike-node-planner/linestring/", # to be implemented
         "../input-for-bike-node-planner/network/",
         "../input-for-bike-node-planner/point/",
         "../input-for-bike-node-planner/polygon/",

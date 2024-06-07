@@ -1,8 +1,8 @@
 # Step 3: Provide information on your study area and user-defined evaluation layers
 
-In this step, you can customize the input data generation by selecting whether to download elevation data (or provide your own); which municipalities to include in the analysis; which point/polygon data to include in the evaluation; and how to merge the data into broader evaluation categories. 
+In this step, you can customize the input data generation by selecting whether to download elevation data (or provide your own); which municipalities to include in the analysis; which point/polygon data to include in the evaluation; and how to merge the data into broader evaluation categories.
 
-You do so by editing the four `.yml` files in the main folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
+You do so by editing the four `.yml` files in the config folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
 
 ## Settings for data download (`config.yml`)
 
@@ -12,9 +12,10 @@ The workflow includes a script that downloads elevation data from [Dataforsyning
 To use this step, the setting `download_elevation_data` must be set to `True` (the default) *and* you must provide your username (at `datafordeler_username`) and password (at `datafordeler_password`) to Dataforsyningen.
 
 **If you already have an elevation raster (DEM) for the study area:**
-1. First, in the `config.yml` file, set `download_elevation_data` to `False`. 
-2. Next, complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
-3. Lastly, place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
+
+1. In the `config.yml` file, set `download_elevation_data` to `False`. 
+2. Complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
+3. Place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
 
 ## Which municipalities? (`config-municipalities.yml`)
 
@@ -24,7 +25,7 @@ For each municipality that you want to be included in the analysis, delete the l
 
 ## Which point layers? (`config-layers-point.yml`)
 
-In the file, you will find a list of categories and subcategories of point data.
+In the `config-layers-point.yml`, you will find a list of categories and subcategories of point data.
 
 ✅ You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name.
 
@@ -47,12 +48,12 @@ In the example below, the main category is `facilit_indkoeb`:
 <!-- 
 ## Which linestring layers? (`config-layers-linestring.yml`)
 
-In the file, you will find a list of categories and subcategories of linestring data. You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name. You can also choose subcategories to be excluded from the evaluation by typing `ignore` next to the subcategory name. Note that the evaluation layer names are case-sensitive. In the example below, ... [insert screentshot]
+In the `config-layers-linestring.yml`, you will find a list of categories and subcategories of linestring data. You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name. You can also choose subcategories to be excluded from the evaluation by typing `ignore` next to the subcategory name. Note that the evaluation layer names are case-sensitive. In the example below, ... [insert screentshot]
 -->
 
 ## Which polygon layers? (`config-layers-polygon.yml`)
 
-In the file, you will likewise find a list of categories and subcategories of polygon data.
+In the `config-layers-polygon.yml`, you will likewise find a list of categories and subcategories of polygon data.
 
 ✅ You can customize how these subcategories are merged into separate evaluation layers by typing the corresponding evaluation layer name next to each subcategory name.
 

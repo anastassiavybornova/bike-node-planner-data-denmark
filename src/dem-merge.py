@@ -3,12 +3,13 @@ from pathlib import Path
 from osgeo import gdal
 import os
 import yaml
+
 gdal.UseExceptions()
 
 os.environ["PROJ_LIB"] = "/Applications/QGIS-LTR.app/Contents/Resources/proj"
 
 # load configs
-configs = yaml.load(open("../config.yml"), Loader=yaml.FullLoader)
+configs = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
 
 dem_output_folder = "../input-for-bike-node-planner/dem"
 
