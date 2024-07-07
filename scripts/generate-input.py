@@ -248,12 +248,12 @@ gdf = gdf.to_crs(proj_crs)  # make sure we have the right projected CRS
 gdf = gdf[
     gdf["kommunekode"].isin(codes)
 ]  # filter to municipality codes indicated in config file
-
+names = list(gdf["navn"])
 gdf_studyarea = gpd.GeoDataFrame({"geometry": [gdf.unary_union]}, crs=proj_crs)
 gdf_studyarea.to_file(
     filename="../input-for-bike-node-planner/studyarea/studyarea.gpkg", index=False
 )
-print(f"Study area polygon created for municipalities: {codes}...")
+print(f"Study area polygon created for municipalities: {names}...")
 del gdf
 
 ### FETCH AND SAVE RAW NETWORK DATA FROM GEOFA ###
