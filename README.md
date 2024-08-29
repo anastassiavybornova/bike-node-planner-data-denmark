@@ -19,13 +19,13 @@ First, set up the BikeNodePlanner environment on your machine. Detailed instruct
 
 **Fill out the info**:
 
-* Data download (`config.yml`)
-* Which municipalities? (`config-municipalities.yml`)
-* Which point layers? (`config-layers-point.yml`)
-<!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
-* Which polygon layers? (`config-layers-polygon.yml`)
+In the [`config`](config/) folder:
 
-All config files can be found in the `config` folder.
+* Data download ([`config.yml`](config/config.yml))
+* Which municipalities? ([`config-municipalities.yml`](config/config-municipalities.yml))
+* Which point layers? ([`config-layers-point.yml`](config/config-layers-point.yml))
+<!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
+* Which polygon layers? ([`config-layers-polygon.yml`](config/config-layers-polygon.yml))
 
 Go to [./docs/define-layers.md](./docs/define-layers.md) for detailed instructions on how to define data download settings, the study area, and the evaluation layers.
 
