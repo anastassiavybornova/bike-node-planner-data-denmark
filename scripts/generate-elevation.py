@@ -8,11 +8,11 @@ import numpy as np
 from pathlib import Path
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
-
-gdal.UseExceptions()
 import warnings
 
 warnings.filterwarnings("ignore")
+gdal.UseExceptions()
+gdal.PushErrorHandler('CPLQuietErrorHandler')
 
 # load configs
 configs = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
