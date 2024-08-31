@@ -5,13 +5,25 @@ channels:
   - defaults
 dependencies:
   - python
+  - pip
+  - jupyter
+  - jupyterlab
   - ipykernel
+  - ipywidgets
   - numpy
   - pandas
-  - shapely=2.0.1
+  - shapely
   - geopandas 
   - osmnx
   - networkx
   - contextily
   - pyyaml
   - owslib
+  - tqdm
+  - qgis
+  - folium
+  - pyarrow
+  - pyogrio
+  - rasterio
+  - pip:
+    - git+https://github.com/uscuni/sgeop.git
