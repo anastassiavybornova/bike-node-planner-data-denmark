@@ -11,3 +11,6 @@ download_elevation_data: False
 # provide login infor for dataforsyning. Only needed if you want to download elevation data
 datafordeler_username: "MAKKFGPILT"
 datafordeler_password: "Testing23!"
+
+# fetch raw data from geofa? for now, default is False (since we cannot automate simplification while QGIS uses Python 3.9)
+geofa: False
