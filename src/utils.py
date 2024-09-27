@@ -1,12 +1,349 @@
-import numpy as np
 import os
-
 os.environ["USE_PYGEOS"] = "0"
+import shutil
 import geopandas as gpd
-import shapely
-from shapely.ops import linemerge
-from shapely.geometry import LineString, Point
+import pandas as pd
+import momepy
+import networkx as nx
+from shapely.geometry import Point, LineString
+from owslib.wfs import WebFeatureService
+from qgis.core import QgsVectorLayer
+from qgis import processing
 
+
+### TODO previously: wfs-func.py
+
+### added from https://github.com/anastassiavybornova/knudepunkter/blob/main/src/wfs_func.py
+
+
+# imports layers from one WFS folder
+def addlayers_from_wfsfolder(wfs_dict, wfs_folder, layernames, wfs_path):
+    for wfs_layer in layernames:
+        wfs_dict[wfs_folder][wfs_layer] = gpd.read_file(
+            wfs_path + f"/{wfs_folder}/{wfs_layer}.gpkg"
+        ).explode(index_parts=False)
+    return wfs_dict
+
+
+# merges WFS gdfs into one gdf
+def merge_gdfs(gdf_list):
+    # make sure all gdfs are the same crs
+    assert len(set([gdf.crs for gdf in gdf_list])) == 1
+    # make sure we have the same geometries everywhere
+    assert len(set([t for gdf in gdf_list for t in gdf.type])) == 1
+    # concatenate with pandas
+    gdf_main = pd.concat([gdf[["geometry", "type"]].copy() for gdf in gdf_list])
+    return gdf_main
+
+
+def get_bounds(gdf):
+    # get bounds of geodataframe
+    bounds = gdf.bounds
+    minx = bounds.minx[0]
+    miny = bounds.miny[0]
+    maxx = bounds.maxx[0]
+    maxy = bounds.maxy[0]
+
+    return minx, miny, maxx, maxy
+
+
+def fix_geometries(input_layer):
+    """
+    Fix invalid geometries in input layer and return temporary layer with valid geoms
+
+    Arguments:
+        input_layer (vector layer): layer with (potentially) invalid geoms
+
+    Returns:
+        fixed_layer: vector layer with valid geoms
+    """
+
+    fixed_layer = processing.run(
+        "native:fixgeometries", {"INPUT": input_layer, "OUTPUT": "TEMPORARY_OUTPUT"}
+    )["OUTPUT"]
+
+    return fixed_layer
+
+
+def clip_save_layer(input_layer, study_area_vlayer, filepath, layer_name):
+    """
+    Clip input layer with vector layer and save as geopackage
+
+    Arguments:
+        input_layer (vector layer): layer to be clipped
+        study_area_vlayer (vector layer): vector layer defining clip extent
+        filepath (str): filepath for saving clipped layer
+        layer_name (str): name of layer for print statement
+
+    Returns:
+        None
+    """
+    clip_params = {
+        "INPUT": input_layer,
+        "OVERLAY": study_area_vlayer,
+        "OUTPUT": filepath,
+    }
+
+    # clip to study area polygon
+    processing.run("native:clip", clip_params)
+
+    print(f"Saved layer {layer_name}")
+
+    return None
+
+
+def get_wfs_layers(
+    study_area_vlayer, bounds, wfs_core, wfs_name, wfs_version, homepath, proj_crs
+):
+    """
+    - creates a new subdir for WFS connection
+    - downloads all available layers from the WFS connection
+    - clips all layers to the extent of study area
+    - saves all layers to new directory as geopackage
+
+    Arguments:
+        study_area_vlayer (vector layer): vector layer defining the study area/clip extent
+        bounds (tuple): bounds for WFS request
+        wfs_core (str): base url for WFS connection. E.g. f"https://rida-services.test.septima.dk/ows?MAP={wfs_name}&service=WFS"
+        wfs_name (str): name of WFS used to create new directory for storing data (usually same as the name used in the base WFS url)
+        wfs_version (str): version of WFS for WFS request
+        homepath (str): homepath for QGIS project
+        proj_crs (str): CRS in the format "EPSG:XXXX" used for WFS request
+
+    Returns:
+        None
+    """
+
+    # define bounds
+    minx, miny, maxx, maxy = bounds
+
+    # define WFS URL
+    wfs_url_get = wfs_core + "&request=GetCapabilities"
+    wfs = WebFeatureService(url=wfs_url_get, version=wfs_version)
+
+    layers_to_import = list(wfs.contents)
+
+    print("Importing layers:", layers_to_import, "from WFS: ", wfs_name)
+
+    wfs_dir = homepath + f"/data/raw/wfs/"
+
+    if not os.path.isdir(wfs_dir):
+        os.mkdir(wfs_dir)
+
+    wfs_layer_dir = homepath + f"/data/raw/wfs/{wfs_name}/"
+
+    if not os.path.isdir(wfs_layer_dir):
+        os.mkdir(wfs_layer_dir)
+
+    for layer in layers_to_import:
+        filepath = wfs_layer_dir + layer + ".gpkg"
+
+        print("Getting data for layer:", layer)
+
+        wfs_url = (
+            wfs_core
+            + f"&request=GetFeature&typeName={layer}&SRSName=EPSG:25832&BBOX={minx},{miny},{maxx},{maxy}"
+        )
+
+        Source = f"pagingEnabled='true' preferCoordinatesForWfsT11='false' restrictToRequestBBOX='1' srsname={proj_crs} typename={layer} url={wfs_url} version='auto'"
+
+        # initialize vector layer of WFS features
+        temp_layer = QgsVectorLayer(Source, layer, "WFS")
+
+        fixed_layer = fix_geometries(temp_layer)
+
+        clip_save_layer(fixed_layer, study_area_vlayer, filepath, layer)
+
+### TODO previously in generate-input.py
+
+def _drop_multiple_joins(joined_nodes):
+
+    joined_nodes.reset_index(inplace=True)
+
+    v = joined_nodes.edge_id.value_counts()
+    grouped = joined_nodes[joined_nodes.edge_id.isin(v.index[v.gt(1)])].groupby(
+        "edge_id"
+    )
+
+    drop_joined = []
+    for edge_id, g in grouped:
+        node_id = g.node_id.max()
+        drop_joined.append((edge_id, node_id))
+
+    for d in drop_joined:
+        joined_nodes.drop(
+            joined_nodes[
+                (joined_nodes.edge_id == d[0]) & (joined_nodes.node_id == d[1])
+            ].index,
+            inplace=True,
+        )
+
+    return joined_nodes
+
+
+def assign_edges_start_end_nodes(edges, nodes, max_distance=5):
+    """
+    Assign node ids of start and end nodes for edges in an edge geodataframe, based on the closest nodes in a node geodataframe
+
+    Arguments:
+        edges (gdf): network edges
+        nodes (gdf): network nodes
+
+    Returns:
+        edges (gdf): edges with u column with start node id and v column with end node id
+    """
+
+    # Extract start and end coordinates of each linestring
+    first_coord = edges.geometry.apply(lambda g: Point(g.coords[0]))
+    last_coord = edges.geometry.apply(lambda g: Point(g.coords[-1]))
+
+    # Add start and end as columns to the gdf
+    edges["start_coord"] = first_coord
+    edges["end_coord"] = last_coord
+
+    start_coords = edges[["edge_id", "start_coord"]].copy()
+    start_coords.set_geometry("start_coord", inplace=True, crs=edges.crs)
+
+    end_coords = edges[["edge_id", "end_coord"]].copy()
+    end_coords.set_geometry("end_coord", inplace=True, crs=edges.crs)
+
+    # join start and end coors to nearest node
+    start_joined = start_coords.sjoin_nearest(
+        nodes[["geometry", "node_id"]],
+        how="left",
+        distance_col="distance",
+        max_distance=max_distance,
+    )
+    end_joined = end_coords.sjoin_nearest(
+        nodes[["geometry", "node_id"]],
+        how="left",
+        distance_col="distance",
+        max_distance=max_distance,
+    )
+    start_joined = _drop_multiple_joins(start_joined)
+    end_joined = _drop_multiple_joins(end_joined)
+
+    assert len(start_joined) == len(edges), "Not all edges have a start node"
+    assert len(end_joined) == len(edges), "Not all edges have an end node"
+
+    edges.drop(["start_coord", "end_coord"], axis=1, inplace=True)
+
+    # Merge with edges
+    new_edges = edges.merge(
+        start_joined[["edge_id", "node_id"]], left_on="edge_id", right_on="edge_id"
+    )
+    new_edges.rename({"node_id": "u"}, inplace=True, axis=1)
+
+    new_edges = new_edges.merge(
+        end_joined[["edge_id", "node_id"]], left_on="edge_id", right_on="edge_id"
+    )
+    new_edges.rename({"node_id": "v"}, inplace=True, axis=1)
+
+    assert len(new_edges) == len(
+        edges
+    ), "New edges geodataframe does not have the same length as the input edges geodataframe"
+
+    return new_edges
+
+
+def find_parallel_edges(edges):
+    """
+    Check for parallel edges in a pandas DataFrame with edges, including columns u with start node index and v with end node index.
+    If two edges have the same u-v pair, the column 'key' is updated to ensure that the u-v-key combination can uniquely identify an edge.
+    Note that (u,v) is not considered parallel to (v,u)
+
+    Arguments:
+        edges (gdf): network edges
+
+    Returns:
+        edges (gdf): edges with updated key index
+    """
+
+    # Find edges with duplicate node pairs
+    parallel = edges[edges.duplicated(subset=["u", "v"])]
+
+    edges.loc[parallel.index, "key"] = 1  # Set keys to 1
+
+    k = 1
+
+    while len(edges[edges.duplicated(subset=["u", "v", "key"])]) > 0:
+        k += 1
+
+        parallel = edges[edges.duplicated(subset=["u", "v", "key"])]
+
+        edges.loc[parallel.index, "key"] = k  # Set keys to 1
+
+    assert (
+        len(edges[edges.duplicated(subset=["u", "v", "key"])]) == 0
+    ), "Edges not uniquely indexed by u,v,key!"
+
+    edges["key"] = edges["key"].fillna(0)
+    edges["key"] = edges["key"].astype(int)
+
+    return edges
+
+
+def order_edge_nodes(gdf):
+
+    # gdf = gdf[gdf.u.notna() & gdf.v.notna()]
+
+    for index, row in gdf[gdf.u.notna() & gdf.v.notna()].iterrows():
+        org_u = row.u
+        org_v = row.v
+
+        gdf.loc[index, "u"] = min(org_u, org_v)
+        gdf.loc[index, "v"] = max(org_u, org_v)
+
+    return gdf
+
+
+# define helper function to clean data folders
+def remove_output_data(
+    output_folders, remove_previous_output: bool = False, verbose: bool = False
+):
+
+    if remove_previous_output:
+        for f in output_folders:
+            if os.path.exists(f):
+                shutil.rmtree(f)
+
+                os.makedirs(f)
+    if verbose:
+        print("Data folder cleaned...")
+
+### TODO previously nw.py
+
+def unzip_line(geom, coordnum = 30):
+    longline = [c for c in geom.coords]
+    if len(longline)%coordnum == 1:
+        coordnum+=1
+    linestrings = []
+    current_linestring = []
+    for c in longline:
+        current_linestring.append(c)
+        if len(current_linestring) > coordnum:
+            linestrings.append(LineString(current_linestring))
+            del current_linestring
+            current_linestring = [c]
+    if current_linestring:
+        linestrings.append(LineString(current_linestring))
+    return linestrings
+
+def drop_dangling_edges_iter(gdf_network, my_danglefactor, my_buffer, iters=5):
+    G = momepy.gdf_to_nx(gdf_network=gdf_network, multigraph = False, integer_labels=True)
+    for _ in range(iters):
+        degree_one = [n for n in G.nodes if nx.degree(G, n)==1]
+        degree_one_to_remove = []
+        for n in degree_one:
+            if G.edges[list(G.edges(n))[0]]["mm_len"] < my_danglefactor * my_buffer:
+                degree_one_to_remove.append(n)
+        G.remove_nodes_from(degree_one_to_remove)
+    edges = momepy.nx_to_gdf(G, points=False, lines=True)
+    edges_rem = momepy.remove_false_nodes(edges)
+    edges_rem["i"] = edges_rem.index
+    return edges_rem
+
+### TODO: previously raw-to-processed.py
 
 def _drop_multiple_joins(joined_nodes):
 
