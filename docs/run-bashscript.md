@@ -14,7 +14,7 @@ bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Cont
 
 
 <details>
-<summary>To determine the location of `proj.db`:</details>
+<summary>To determine the location of `proj.db`:</summary>
 
 * Navigate to your QGIS installation in your file explorer.
 * On a Mac, go to Applications > Find QGIS > Right click and choose *'Show package contents'*.
@@ -23,8 +23,6 @@ bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Cont
 <p align="center"><img alt="identifying the proj path" src="/docs/screenshots/find_proj.png" width=100%></p>
 
 </details>
-
-
 
 > **Note** that depending on the size and number of municipalities in your study area, running the bash script can take several minutes. Status messages will be printed out as the script runs (see screenshot below).
 
