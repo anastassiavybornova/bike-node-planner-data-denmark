@@ -22,7 +22,7 @@ bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Cont
 
 <p align="center"><img alt="identifying the proj path" src="/docs/screenshots/find_proj.png" width=100%></p>
 
-<details>
+</details>
 
 
 
