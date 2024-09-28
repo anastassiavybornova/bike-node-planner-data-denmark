@@ -25,7 +25,7 @@ proj_crs = config["proj_crs"]
 wfs_version = config["geofa_wfs_version"]
 node_layer_name = config["geofa_nodes_layer_name"]
 stretches_layer_name = config["geofa_stretches_layer_name"]
-geofa = config["geofa"]
+geofa = bool(config["geofa"])
 
 municipalities = yaml.load(
     open("../config/config-municipalities.yml"), Loader=yaml.FullLoader
@@ -216,11 +216,12 @@ if geofa:
 
 else:
 
+    print("Generating network edges...")
     # read in all available edges for DK (already simplified)
     edges_all = gpd.read_file("../data/network-communication/edges.gpkg")
 
     # get only edges that intersect study area
-    edges = edges_all[edges_all.intersects(study_poly)].copy().reset_index(drop=True)
+    edges = edges_all.loc[edges_all.sindex.query(study_poly, predicate="intersects")].copy().reset_index(drop=True)
 
     # keep only relevant (geometry) colum
     edges = edges[["geometry"]]
@@ -233,10 +234,13 @@ else:
     edges.to_file(
         "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
     )
+    print("Network edges generated and saved.")
 
 ### CREATE EVALUATION LAYERS ###
 
 # create a dictionary of evaluation layers (based on config file inputs)
+
+print("Reading in evaluation layer configurations")
 
 layer_dict = {}
 
