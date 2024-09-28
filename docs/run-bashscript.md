@@ -25,7 +25,3 @@ bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Cont
 </details>
 
 > **Note** that depending on the size and number of municipalities in your study area, running the bash script can take several minutes. Status messages will be printed out as the script runs (see screenshot below).
-
-3. Once the script has successfully finished, you will see the following printout in your command line interface:
-
-<p align="center"><img alt="running the bash script" src="/docs/screenshots/bash.png" width=100%></p>
