@@ -5,9 +5,9 @@ geofa_stretches_layer_name: "fkg.t_5609_cykelknudepunktsstraekninger" # leave de
 geofa_nodes_layer_name: "fkg.t_5608_cykelknudepunkter" # leave default setting unless the GeoFA data have been modified
 geofa_wfs_version: "2.0.0" # leave default setting unless the GeoFA data have been modified
 
-# set to False if you already have a DEM elevation raster for the study area
-download_elevation_data: False
-
 # provide login infor for dataforsyning. Only needed if you want to download elevation data
 datafordeler_username: "MAKKFGPILT"
 datafordeler_password: "Testing23!"
+
+# fetch raw data from geofa? for now, default is False (since we cannot automate simplification while QGIS uses Python 3.9)
+geofa: False
