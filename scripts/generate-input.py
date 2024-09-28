@@ -9,7 +9,7 @@ import yaml
 import geopandas as gpd
 import pandas as pd
 import warnings
-import utils
+from src import utils
 
 warnings.filterwarnings("ignore")
 
@@ -30,11 +30,12 @@ geofa = config["geofa"]
 municipalities = yaml.load(
     open("../config/config-municipalities.yml"), Loader=yaml.FullLoader
 )
+
 codes = municipalities["kommunekode"]
 
 geomtypes = [
     "point",
-    # "linestring", # tbi
+    # "linestring", # TODO
     "polygon",
 ]
 
@@ -54,7 +55,7 @@ os.makedirs(main_folder, exist_ok=True)
 
 sub_folders = [
     "dem",
-    # "linestring", # for future iterations
+    # "linestring", # TODO
     "network",
     "point",
     "polygon",
@@ -73,7 +74,7 @@ utils.remove_output_data(
     [
         "../data/dem",
         "../input-for-bike-node-planner/dem",
-        # "../input-for-bike-node-planner/linestring/", # to be implemented
+        # "../input-for-bike-node-planner/linestring/", # TODO
         "../input-for-bike-node-planner/network/",
         "../input-for-bike-node-planner/point/",
         "../input-for-bike-node-planner/polygon/",
@@ -91,128 +92,147 @@ gdf = gdf.to_crs(proj_crs)  # make sure we have the right projected CRS
 gdf = gdf[
     gdf["kommunekode"].isin(codes)
 ]  # filter to municipality codes indicated in config file
-names = list(gdf["navn"])
-gdf_studyarea = gpd.GeoDataFrame({"geometry": [gdf.unary_union]}, crs=proj_crs)
+
+study_poly = gdf.union_all()
+gdf_studyarea = gpd.GeoDataFrame({"geometry": [study_poly]}, crs=proj_crs)
 gdf_studyarea.to_file(
     filename="../input-for-bike-node-planner/studyarea/studyarea.gpkg", index=False
 )
+
+names = list(gdf["navn"])
 print(f"Study area polygon created for municipalities: {names}...")
+
 del gdf
 
 ### FETCH AND SAVE RAW NETWORK DATA FROM GEOFA ###
 if geofa:
 
-    # Fetch input data from GeoFA (raw data)
+    # # Fetch input data from GeoFA (raw data)
 
-    url_knudepunkter = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={node_layer_name}&service=WFS&version={wfs_version}"
-    url_straekninger = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={stretches_layer_name}&service=WFS&version={wfs_version}"
+    # url_knudepunkter = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={node_layer_name}&service=WFS&version={wfs_version}"
+    # url_straekninger = f"https://geofa.geodanmark.dk/ows/fkg/fkg/?request=GetFeature&typename={stretches_layer_name}&service=WFS&version={wfs_version}"
 
-    try:
-        knudepunkter = gpd.read_file(url_knudepunkter)
-        straekninger = gpd.read_file(url_straekninger)
-        print("GeoFA data fetched successfully.")
-    except:
-        print("Error when fetching GeoFA data. Exiting... Please rerun the script!")
-        exit()
+    # try:
+    #     knudepunkter = gpd.read_file(url_knudepunkter)
+    #     straekninger = gpd.read_file(url_straekninger)
+    #     print("GeoFA data fetched successfully.")
+    # except:
+    #     print("Error when fetching GeoFA data. Exiting... Please rerun the script!")
+    #     exit()
 
-    assert len(knudepunkter) > 0, "No nodes found"
-    assert len(straekninger) > 0, "No stretches found"
+    # assert len(knudepunkter) > 0, "No nodes found"
+    # assert len(straekninger) > 0, "No stretches found"
 
-    # limit to extent of study area
-    assert (
-        straekninger.crs == gdf_studyarea.crs
-    ), "Crs of straekninger does not match crs of study area"
-    assert (
-        knudepunkter.crs == gdf_studyarea.crs
-    ), "Crs of knudepunkter does not match crs of study area"
+    # # limit to extent of study area
+    # assert (
+    #     straekninger.crs == gdf_studyarea.crs
+    # ), "Crs of straekninger does not match crs of study area"
+    # assert (
+    #     knudepunkter.crs == gdf_studyarea.crs
+    # ), "Crs of knudepunkter does not match crs of study area"
 
-    edges_studyarea = straekninger.sjoin(gdf_studyarea, predicate="intersects").copy()
-    edges_studyarea.drop(columns=["index_right"], inplace=True)
-    nodes_studyarea = knudepunkter.clip(edges_studyarea.buffer(500).unary_union)
+    # edges_studyarea = straekninger.sjoin(gdf_studyarea, predicate="intersects").copy()
+    # edges_studyarea.drop(columns=["index_right"], inplace=True)
+    # nodes_studyarea = knudepunkter.clip(edges_studyarea.buffer(500).unary_union)
 
-    # remove empty geometries
-    edges_studyarea = edges_studyarea[edges_studyarea.geometry.notna()].reset_index(
-        drop=True
-    )
-    nodes_studyarea = nodes_studyarea[nodes_studyarea.geometry.notna()].reset_index(
-        drop=True
-    )
+    # # remove empty geometries
+    # edges_studyarea = edges_studyarea[edges_studyarea.geometry.notna()].reset_index(
+    #     drop=True
+    # )
+    # nodes_studyarea = nodes_studyarea[nodes_studyarea.geometry.notna()].reset_index(
+    #     drop=True
+    # )
 
-    # assert there is one (and only one) LineString per edge geometry row
-    nodes_studyarea = nodes_studyarea.explode(index_parts=False).reset_index(drop=True)
-    assert all(
-        nodes_studyarea.geometry.type == "Point"
-    ), "Not all node geometries are Points"
-    assert all(nodes_studyarea.geometry.is_valid), "Not all node geometries are valid"
+    # # assert there is one (and only one) LineString per edge geometry row
+    # nodes_studyarea = nodes_studyarea.explode(index_parts=False).reset_index(drop=True)
+    # assert all(
+    #     nodes_studyarea.geometry.type == "Point"
+    # ), "Not all node geometries are Points"
+    # assert all(nodes_studyarea.geometry.is_valid), "Not all node geometries are valid"
 
-    # assert there is one (and only one) Point per node geometry row
-    edges_studyarea = edges_studyarea.explode(index_parts=False).reset_index(drop=True)
-    assert all(
-        edges_studyarea.geometry.type == "LineString"
-    ), "Not all edge geometries are LineStrings"
-    assert all(edges_studyarea.geometry.is_valid), "Not all edge geometries are valid"
+    # # assert there is one (and only one) Point per node geometry row
+    # edges_studyarea = edges_studyarea.explode(index_parts=False).reset_index(drop=True)
+    # assert all(
+    #     edges_studyarea.geometry.type == "LineString"
+    # ), "Not all edge geometries are LineStrings"
+    # assert all(edges_studyarea.geometry.is_valid), "Not all edge geometries are valid"
 
-    # save
-    os.makedirs("../input-for-bike-node-planner/network/raw/", exist_ok=True)
+    # # save
+    # os.makedirs("../input-for-bike-node-planner/network/raw/", exist_ok=True)
 
-    edges_studyarea.to_file(
-        "../input-for-bike-node-planner/network/raw/edges.gpkg", index=False
-    )
+    # edges_studyarea.to_file(
+    #     "../input-for-bike-node-planner/network/raw/edges.gpkg", index=False
+    # )
 
-    nodes_studyarea.to_file(
-        "../input-for-bike-node-planner/network/raw/nodes.gpkg", index=False
-    )
+    # nodes_studyarea.to_file(
+    #     "../input-for-bike-node-planner/network/raw/nodes.gpkg", index=False
+    # )
 
-    print("Raw data on nodes and edges for study area fetched from GeoFA and saved...")
+    # print("Raw data on nodes and edges for study area fetched from GeoFA and saved...")
 
-    # TODO (FR) add here the simplification step on municipality level (feature request)
-    # will replace processing step below.
-    # raw data saved to `network/raw`; simplified data saved to `network/processed`
+    # # TODO (FR) add here the simplification step on municipality level (feature request)
+    # # will replace processing step below.
+    # # raw data saved to `network/raw`; simplified data saved to `network/processed`
 
-    edges_studyarea["edge_id"] = edges_studyarea.id_cykelknudepunktsstraekning
-    assert len(edges_studyarea) == len(
-        edges_studyarea["edge_id"].unique()
-    ), "Edge ids are not unique"
+    # edges_studyarea["edge_id"] = edges_studyarea.id_cykelknudepunktsstraekning
+    # assert len(edges_studyarea) == len(
+    #     edges_studyarea["edge_id"].unique()
+    # ), "Edge ids are not unique"
 
-    nodes_studyarea["node_id"] = nodes_studyarea.id_cykelknudepkt
-    assert len(nodes_studyarea) == len(
-        nodes_studyarea["node_id"].unique()
-    ), "Node ids are not unique"
+    # nodes_studyarea["node_id"] = nodes_studyarea.id_cykelknudepkt
+    # assert len(nodes_studyarea) == len(
+    #     nodes_studyarea["node_id"].unique()
+    # ), "Node ids are not unique"
 
-    processed_edges = utils.assign_edges_start_end_nodes(edges_studyarea, nodes_studyarea)
+    # processed_edges = utils.assign_edges_start_end_nodes(edges_studyarea, nodes_studyarea)
 
-    processed_edges = utils.order_edge_nodes(processed_edges)
+    # processed_edges = utils.order_edge_nodes(processed_edges)
 
-    processed_edges = utils.find_parallel_edges(processed_edges)
+    # processed_edges = utils.find_parallel_edges(processed_edges)
 
-    assert len(processed_edges) == len(
-        edges_studyarea
-    ), "The number of edges has changed (processed_edges not same length as edges_studyarea)"
+    # assert len(processed_edges) == len(
+    #     edges_studyarea
+    # ), "The number of edges has changed (processed_edges not same length as edges_studyarea)"
 
-    processed_nodes = nodes_studyarea.loc[
-        nodes_studyarea["node_id"].isin(processed_edges["u"])
-        | nodes_studyarea["node_id"].isin(processed_edges["v"])
-    ]
+    # processed_nodes = nodes_studyarea.loc[
+    #     nodes_studyarea["node_id"].isin(processed_edges["u"])
+    #     | nodes_studyarea["node_id"].isin(processed_edges["v"])
+    # ]
 
-    # save to files
-    os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+    # # save to files
+    # os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
 
-    processed_nodes.to_file(
-        "../input-for-bike-node-planner/network/processed/nodes.gpkg", index=False
-    )
+    # processed_nodes.to_file(
+    #     "../input-for-bike-node-planner/network/processed/nodes.gpkg", index=False
+    # )
 
-    processed_edges.to_file(
-        "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
-    )
+    # processed_edges.to_file(
+    #     "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
+    # )
 
-    print("Data on nodes and edges for study area processed and saved...")
+    # print("Data on nodes and edges for study area processed and saved...")
+    print("GeoFA data fetching not implemented yet")
+    exit()
 
 else:
-    # TODO add here a step where data is being fetched and clipped from `network-communication` 
-    # NO raw data saved to `network/raw`; ONLY simplified data saved to `network/processed`
-    pass
-    ### PROCESS (CLEAN) AND SAVE NETWORK DATA ###
 
+    # read in all available edges for DK (already simplified)
+    edges_all = gpd.read_file("../data/network-communication/edges.gpkg")
+
+    # get only edges that intersect study area
+    edges = edges_all[edges_all.intersects(study_poly)].copy().reset_index(drop=True)
+
+    # keep only relevant (geometry) colum
+    edges = edges[["geometry"]]
+
+    # # add unique edge ID (index) # TODO: do we need this?
+    # edges["edge_id"] = edges.index
+
+    # save to file
+    os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+    edges.to_file(
+        "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
+    )
 
 ### CREATE EVALUATION LAYERS ###
 
