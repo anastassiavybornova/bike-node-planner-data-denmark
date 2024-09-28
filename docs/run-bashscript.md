@@ -12,9 +12,8 @@ bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Cont
 * `python_path`: the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)).
 * `projdb_path`: the path to the folder of your fiona installation (Python package within QGIS) in which the file `proj.db` is located. 
 
-
 <details>
-<summary>To determine the location of `proj.db`:</summary>
+<summary>To determine the location of `proj.db` (click to expand)</summary>
 
 * Navigate to your QGIS installation in your file explorer.
 * On a Mac, go to Applications > Find QGIS > Right click and choose *'Show package contents'*.
