@@ -4,7 +4,7 @@ This repository contains all data and scripts necessary to _automatically_ creat
 
 ## Step 1: Download the contents of this repository
 
-Download the contents of this repository to your local machine. Click [./docs/download-repo.md](./docs/download-repo.md) for more detailed instructions.
+[Download](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/archive/refs/heads/main.zip) or `git clone` the contents of this repository to your local machine.
 
 ## Step 2: Software installations
 
