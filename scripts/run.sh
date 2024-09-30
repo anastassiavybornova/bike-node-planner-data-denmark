@@ -17,7 +17,7 @@ echo "proj.db fiona path: '$projdb_path'"
 
 $python_path generate-input.py
 
-export PROJ_LIB=$projdb_path # point to QGIS' proj.db location
+export PROJ_LIB=$projdb_path # point to QGIS' fiona proj.db location
 
 if [ "$download_elevation" == "1" ] ; then 
     $python_path -W ignore generate-elevation.py
