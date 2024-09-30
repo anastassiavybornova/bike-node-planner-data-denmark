@@ -9,6 +9,7 @@ import yaml
 import geopandas as gpd
 import pandas as pd
 import warnings
+import momepy
 from src import utils
 
 warnings.filterwarnings("ignore")
@@ -216,6 +217,10 @@ if geofa:
 
 else:
 
+    # create directoriy for saving
+    os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+
+    ### network edges
     print("Generating network edges...")
     # read in all available edges for DK (already simplified)
     edges_all = gpd.read_file("../data/network-communication/edges.gpkg")
@@ -229,12 +234,55 @@ else:
     # # add unique edge ID (index) # TODO: do we need this?
     # edges["edge_id"] = edges.index
 
-    # save to file
-    os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+    # derive nodes & node IDs of edges through momepy
+    G = momepy.gdf_to_nx(edges)
+    nodes, edges = momepy.nx_to_gdf(G)
+
     edges.to_file(
         "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
     )
+    
     print("Network edges generated and saved.")
+
+    ### network nodes
+
+    # add "raw node" ID to node gdf
+    nodes_raw = gpd.read_file(f"../data/network-technical/cykelknudepunkter/cykelknudepunkter.gpkg")
+    nodes_raw = nodes_raw.explode()
+    nodes_raw = nodes_raw.to_crs(proj_crs)
+
+    assert nodes.crs == nodes_raw.crs
+    
+    # for each node in raw data set, find the nearest node in simplified data set
+    nodes_raw["node_id"] = nodes_raw.apply(lambda x: nodes.sindex.nearest(x.geometry)[1][0], axis = 1)
+    d = {}
+    for n, group in nodes_raw.groupby("node_id"):
+        d[n] = list(group["id_cykelknudepkt"]) 
+
+    id_cykelknudepkt = []
+    for nodeID in nodes.nodeID:
+        if nodeID in d:
+            id_cykelknudepkt.append(d[nodeID])
+        else:
+            id_cykelknudepkt.append(None)
+
+    nodes["id_cykelknudepkt"] = id_cykelknudepkt
+
+    nodes.to_file(
+        "../input-for-bike-node-planner/network/processed/nodes.gpkg",
+        index=False
+    )
+
+    # save raw nodes for this area
+    raw_node_ids = [item for sublist in d.values() for item in sublist]
+    nodes_raw_studyarea = nodes_raw[nodes_raw.id_cykelknudepkt.isin(raw_node_ids)].copy().reset_index(drop=True)
+    nodes_raw_studyarea.to_file(
+        "../input-for-bike-node-planner/network/processed/nodes_raw.gpkg",
+        index=False
+    )
+
+    print("Network nodes generated and saved.")
+    
 
 ### CREATE EVALUATION LAYERS ###
 
