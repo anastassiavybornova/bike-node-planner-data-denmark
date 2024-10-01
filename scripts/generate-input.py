@@ -268,6 +268,9 @@ else:
 
     assert nodes.crs == nodes_raw.crs
     
+    # clip to study area extent
+    nodes_raw = nodes_raw.clip(gdf_studyarea.buffer(500).union_all())
+
     # for each node in raw data set, find the nearest node in simplified data set
     nodes_raw["node_id"] = nodes_raw.apply(lambda x: nodes.sindex.nearest(x.geometry)[1][0], axis = 1)
     d = {}
