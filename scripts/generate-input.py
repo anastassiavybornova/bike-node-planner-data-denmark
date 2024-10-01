@@ -217,11 +217,26 @@ if geofa:
 
 else:
 
-    # create directoriy for saving
+    # create directories for saving
+    os.makedirs("../input-for-bike-node-planner/network/raw/", exist_ok=True)
     os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
 
     ### network edges
     print("Generating network edges...")
+    
+    # read in raw edges and clip to area (just for plotting)
+    edges_raw = gpd.read_file(
+        "../data/network-technical/cykelknudepunktsstraekninger/cykelknudepunktsstraekninger.gpkg"
+    )
+
+    # clip to study area and save raw edges
+    edges_raw = edges_raw.to_crs(proj_crs)
+    edges_raw = edges_raw.loc[edges_raw.sindex.query(study_poly, predicate="intersects")].copy().reset_index(drop=True)
+    edges_raw.to_file(
+                "../input-for-bike-node-planner/network/raw/edges.gpkg",
+                index=False
+    )
+
     # read in all available edges for DK (already simplified)
     edges_all = gpd.read_file("../data/network-communication/edges.gpkg")
 
@@ -277,7 +292,7 @@ else:
     raw_node_ids = [item for sublist in d.values() for item in sublist]
     nodes_raw_studyarea = nodes_raw[nodes_raw.id_cykelknudepkt.isin(raw_node_ids)].copy().reset_index(drop=True)
     nodes_raw_studyarea.to_file(
-        "../input-for-bike-node-planner/network/processed/nodes_raw.gpkg",
+        "../input-for-bike-node-planner/network/raw/nodes.gpkg",
         index=False
     )
 
