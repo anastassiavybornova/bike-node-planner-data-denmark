@@ -5,7 +5,7 @@
 3. Run the bash script `run.sh` with flags described below, for example:
 
 ```bash
-bash run.sh --download_elevation 0 --python_path /Applications/QGIS-LTR.app/Contents/MacOS/bin/python3.9 --projdb_path /Applications/QGIS-LTR.app/Contents/Resources/python/site-packages/fiona/proj_data/
+bash run.sh --download_elevation 1 --python_path /Applications/QGIS-LTR.app/Contents/MacOS/bin/python3.9 --projdb_path /Applications/QGIS-LTR.app/Contents/Resources/python/site-packages/fiona/proj_data/
 ```
 
 * `download_elevation`: 1 for Yes, 0 for No (should elevation data be downloaded?)
