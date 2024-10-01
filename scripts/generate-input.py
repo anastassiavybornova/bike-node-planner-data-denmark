@@ -249,10 +249,24 @@ else:
     # # add unique edge ID (index) # TODO: do we need this?
     # edges["edge_id"] = edges.index
 
+    # remove empty geometries
+    edges = edges[edges.geometry.notna()].reset_index(drop=True)
+
+    # assert there is one (and only one) LineString per edge geometry row
+    edges = edges.explode(index_parts=False).reset_index(drop=True)
+    assert all(
+        edges.geometry.type == "LineString"
+    ), "Not all edge geometries are LineStrings"
+    assert all(edges.geometry.is_valid), "Not all edge geometries are valid"
+
     # derive nodes & node IDs of edges through momepy
     G = momepy.gdf_to_nx(edges)
     nodes, edges = momepy.nx_to_gdf(G)
 
+    # add edge ID column
+    edges["edge_id"] = edges.index
+
+    # save to file
     edges.to_file(
         "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
     )
