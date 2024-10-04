@@ -9,10 +9,11 @@ from pathlib import Path
 from owslib.wcs import WebCoverageService
 from osgeo import gdal
 import warnings
+from shapely.geometry import Polygon
 
 warnings.filterwarnings("ignore")
 gdal.UseExceptions()
-gdal.PushErrorHandler('CPLQuietErrorHandler')
+gdal.PushErrorHandler("CPLQuietErrorHandler")
 
 # load configs
 configs = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
@@ -68,45 +69,120 @@ for x in cols:
 
 assert len(bboxes) == len(cols) * len(rows), "Error in generation of bounding boxes"
 
-try:
-    for i, bbox in enumerate(bboxes):
-        # Request the DSM data from the WCS
-        response = wcs.getCoverage(
-            identifier=coverage_name,
-            bbox=bbox,
-            format="GTiff",
-            crs=f"urn:ogc:def:crs:{proj_crs}",
-            resx=0.4,
-            resy=0.4,
-            width=width,
-            height=height,
+# make sure that no bboxes are outside of the main bounding box for the data set
+
+# get the bounding box of the data set
+lon_min, lat_min, lon_max, lat_max = wcs["dhm_terraen"].boundingBoxWGS84
+
+bbox_limit_gdf = gpd.GeoDataFrame(
+    geometry=[
+        Polygon(
+            [
+                (lon_min, lat_min),
+                (lon_max, lat_min),
+                (lon_max, lat_max),
+                (lon_min, lat_max),
+            ]
         )
+    ],
+    crs="EPSG:4326",
+)
+bbox_limit_gdf.to_crs(proj_crs, inplace=True)
 
-        with open(
-            dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
-        ) as file:
-            file.write(response.read())
+# check that none of the bboxes are outside of the bounding box
+valid_bboxes = []
+for i, bbox in enumerate(bboxes):
+    bbox_gdf = gpd.GeoDataFrame(
+        geometry=[
+            Polygon(
+                [
+                    (bbox[0], bbox[1]),
+                    (bbox[2], bbox[1]),
+                    (bbox[2], bbox[3]),
+                    (bbox[0], bbox[3]),
+                ]
+            )
+        ],
+        crs=proj_crs,
+    )
+    if bbox_gdf.within(bbox_limit_gdf.geometry[0]).all():
+        valid_bboxes.append(bbox)
 
-except:
-    i = i - 1
+bboxes = valid_bboxes
 
-    for i, bbox in enumerate(bboxes[i:]):
-        # Request the DSM data from the WCS
-        response = wcs.getCoverage(
-            identifier=coverage_name,
-            bbox=bbox,
-            format="GTiff",
-            crs=f"urn:ogc:def:crs:{proj_crs}",
-            resx=0.4,
-            resy=0.4,
-            width=width,
-            height=height,
-        )
 
-        with open(
-            dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
-        ) as file:
-            file.write(response.read())
+while True:
+    try:
+        for i, bbox in enumerate(bboxes):
+            try:
+                # Request the DSM data from the WCS
+                response = wcs.getCoverage(
+                    identifier=coverage_name,
+                    bbox=bbox,
+                    format="GTiff",
+                    crs=f"urn:ogc:def:crs:{proj_crs}",
+                    resx=0.4,
+                    resy=0.4,
+                    width=width,
+                    height=height,
+                )
+
+                with open(
+                    dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+                ) as file:
+                    file.write(response.read())
+
+            except Exception as e:
+                print(f"Error with bbox {bbox}: {e}")
+                print(f"Skipping bbox {i}")
+
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+    finally:
+        # print("Finished processing all bboxes.")
+        break
+
+
+# try:
+#     for i, bbox in enumerate(bboxes):
+#         # Request the DSM data from the WCS
+#         response = wcs.getCoverage(
+#             identifier=coverage_name,
+#             bbox=bbox,
+#             format="GTiff",
+#             crs=f"urn:ogc:def:crs:{proj_crs}",
+#             resx=0.4,
+#             resy=0.4,
+#             width=width,
+#             height=height,
+#         )
+
+#         with open(
+#             dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+#         ) as file:
+#             file.write(response.read())
+
+# except:
+#     i = i - 1
+
+#     for i, bbox in enumerate(bboxes[i:]):
+#         # Request the DSM data from the WCS
+#         response = wcs.getCoverage(
+#             identifier=coverage_name,
+#             bbox=bbox,
+#             format="GTiff",
+#             crs=f"urn:ogc:def:crs:{proj_crs}",
+#             resx=0.4,
+#             resy=0.4,
+#             width=width,
+#             height=height,
+#         )
+
+#         with open(
+#             dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+#         ) as file:
+#             file.write(response.read())
 
 print("\t Elevation data downloaded...")
 print("\t Merging data...")
