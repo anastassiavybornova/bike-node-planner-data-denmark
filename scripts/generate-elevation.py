@@ -125,6 +125,7 @@ while True:
                     resy=0.4,
                     width=width,
                     height=height,
+                    timeout=120,
                 )
 
                 with open(
