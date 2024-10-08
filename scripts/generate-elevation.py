@@ -10,6 +10,7 @@ from owslib.wcs import WebCoverageService
 from osgeo import gdal
 import warnings
 from shapely.geometry import Polygon
+from requests.exceptions import ReadTimeout
 
 warnings.filterwarnings("ignore")
 gdal.UseExceptions()
@@ -114,76 +115,44 @@ bboxes = valid_bboxes
 while True:
     try:
         for i, bbox in enumerate(bboxes):
-            try:
-                # Request the DSM data from the WCS
-                response = wcs.getCoverage(
-                    identifier=coverage_name,
-                    bbox=bbox,
-                    format="GTiff",
-                    crs=f"urn:ogc:def:crs:{proj_crs}",
-                    resx=0.4,
-                    resy=0.4,
-                    width=width,
-                    height=height,
-                    timeout=120,
-                )
+            retry = True
 
-                with open(
-                    dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
-                ) as file:
-                    file.write(response.read())
+            while retry:
+                try:
 
-            except Exception as e:
-                print(f"Error with bbox {bbox}: {e}")
-                print(f"Skipping bbox {i}")
+                    response = wcs.getCoverage(
+                        identifier=coverage_name,
+                        bbox=bbox,
+                        format="GTiff",
+                        crs=f"urn:ogc:def:crs:{proj_crs}",
+                        resx=0.4,
+                        resy=0.4,
+                        width=width,
+                        height=height,
+                        timeout=120,
+                    )
+
+                    with open(
+                        dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
+                    ) as file:
+                        file.write(response.read())
+
+                    retry = False
+
+                except ReadTimeout as rte:
+                    print(f"ReadTimeoutError for bbox {bbox}: Retrying...")
+
+                except Exception as e:
+                    print(f"Error with bbox {bbox}: {e}")
+                    print(f"Skipping bbox {i}")
+                    retry = False
 
     except Exception as e:
         print(f"Unexpected error: {e}")
 
     finally:
-        # print("Finished processing all bboxes.")
         break
 
-
-# try:
-#     for i, bbox in enumerate(bboxes):
-#         # Request the DSM data from the WCS
-#         response = wcs.getCoverage(
-#             identifier=coverage_name,
-#             bbox=bbox,
-#             format="GTiff",
-#             crs=f"urn:ogc:def:crs:{proj_crs}",
-#             resx=0.4,
-#             resy=0.4,
-#             width=width,
-#             height=height,
-#         )
-
-#         with open(
-#             dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
-#         ) as file:
-#             file.write(response.read())
-
-# except:
-#     i = i - 1
-
-#     for i, bbox in enumerate(bboxes[i:]):
-#         # Request the DSM data from the WCS
-#         response = wcs.getCoverage(
-#             identifier=coverage_name,
-#             bbox=bbox,
-#             format="GTiff",
-#             crs=f"urn:ogc:def:crs:{proj_crs}",
-#             resx=0.4,
-#             resy=0.4,
-#             width=width,
-#             height=height,
-#         )
-
-#         with open(
-#             dem_intermediate_folder + f"/{coverage_name}_{i}.tif", "wb"
-#         ) as file:
-#             file.write(response.read())
 
 print("\t Elevation data downloaded...")
 print("\t Merging data...")
