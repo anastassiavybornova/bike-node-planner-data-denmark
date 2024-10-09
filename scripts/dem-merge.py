@@ -1,3 +1,4 @@
+# %%
 # from https://www.giscourse.com/automatically-merge-raster-files-using-pyqgis/
 from pathlib import Path
 from osgeo import gdal
@@ -33,3 +34,5 @@ vrt_path = os.path.join(input_path, "prov_vrt.vrt")
 vrt = gdal.BuildVRT(vrt_path, l)
 
 gdal.Translate(output_path, vrt, format="GTiff")
+
+# %%
