@@ -611,3 +611,114 @@ def order_edge_nodes(gdf):
 #     assert len(nodes_in_use) == len(nodes_in_use.id.unique())
 
 #     return nodes_in_use, edges_no_parallel, edges
+
+def get_edges_and_nodes(datasource, proj_crs, study_poly, gdf_studyarea):
+
+    ### network edges
+    print("Generating network edges...")
+
+    # read in raw edges and clip to area (just for plotting)
+    edges_raw = gpd.read_file(
+        f"../data/network-technical/{datasource}/cykelknudepunktsstraekninger.gpkg"
+    )
+
+    # clip to study area and save raw edges
+    edges_raw = edges_raw.to_crs(proj_crs)
+    edges_raw = (
+        edges_raw.loc[edges_raw.sindex.query(study_poly, predicate="intersects")]
+        .copy()
+        .reset_index(drop=True)
+    )
+    edges_raw.to_file(
+        "../input-for-bike-node-planner/network/raw/edges.gpkg", index=False
+    )
+
+    # read in all available edges for DK (already simplified)
+    edges_all = gpd.read_file(f"../data/network-communication/{datasource}/edges.gpkg")
+
+    # get only edges that intersect study area
+    edges = (
+        edges_all.loc[edges_all.sindex.query(study_poly, predicate="intersects")]
+        .copy()
+        .reset_index(drop=True)
+    )
+
+    # keep only relevant (geometry) colum
+    edges = edges[["geometry"]]
+
+    # # add unique edge ID (index) # TODO: do we need this?
+    # edges["edge_id"] = edges.index
+
+    # remove empty geometries
+    edges = edges[edges.geometry.notna()].reset_index(drop=True)
+
+    # assert there is one (and only one) LineString per edge geometry row
+    edges = edges.explode(index_parts=False).reset_index(drop=True)
+    assert all(
+        edges.geometry.type == "LineString"
+    ), "Not all edge geometries are LineStrings"
+    assert all(edges.geometry.is_valid), "Not all edge geometries are valid"
+
+    # derive nodes & node IDs of edges through momepy
+    G = momepy.gdf_to_nx(edges)
+    nodes, edges = momepy.nx_to_gdf(G)
+
+    # add edge ID column
+    edges["edge_id"] = edges.index
+
+    # save to file
+    edges.to_file(
+        "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
+    )
+
+    print("Network edges generated and saved.")
+
+    ### network nodes
+
+    # add "raw node" ID to node gdf
+    nodes_raw = gpd.read_file(
+        f"../data/network-technical/{datasource}/cykelknudepunkter.gpkg"
+    )
+    nodes_raw = nodes_raw.explode()
+    nodes_raw = nodes_raw.to_crs(proj_crs)
+
+    assert nodes.crs == nodes_raw.crs
+
+    # clip to study area extent
+    nodes_raw = nodes_raw.clip(gdf_studyarea.buffer(500).union_all())
+
+    # for each node in raw data set, find the nearest node in simplified data set
+    nodes_raw["node_id"] = nodes_raw.apply(
+        lambda x: nodes.sindex.nearest(x.geometry)[1][0], axis=1
+    )
+    d = {}
+    for n, group in nodes_raw.groupby("node_id"):
+        d[n] = list(group["id_cykelknudepkt"])
+
+    id_cykelknudepkt = []
+    for nodeID in nodes.nodeID:
+        if nodeID in d:
+            id_cykelknudepkt.append(d[nodeID])
+        else:
+            id_cykelknudepkt.append(None)
+
+    nodes["id_cykelknudepkt"] = id_cykelknudepkt
+
+    nodes.to_file(
+        "../input-for-bike-node-planner/network/processed/nodes.gpkg", index=False
+    )
+
+    # save raw nodes for this area
+    raw_node_ids = [item for sublist in d.values() for item in sublist]
+    nodes_raw_studyarea = (
+        nodes_raw[nodes_raw.id_cykelknudepkt.isin(raw_node_ids)]
+        .copy()
+        .reset_index(drop=True)
+    )
+    nodes_raw_studyarea.to_file(
+        "../input-for-bike-node-planner/network/raw/nodes.gpkg", index=False
+    )
+
+    print("Network nodes generated and saved.")
+
+    return None
