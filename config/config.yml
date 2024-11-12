@@ -1,13 +1,5 @@
 # provide projected crs 
 proj_crs: "EPSG:25832"
 
-geofa_stretches_layer_name: "fkg.t_5609_cykelknudepunktsstraekninger" # leave default setting unless the GeoFA data have been modified
-geofa_nodes_layer_name: "fkg.t_5608_cykelknudepunkter" # leave default setting unless the GeoFA data have been modified
-geofa_wfs_version: "2.0.0" # leave default setting unless the GeoFA data have been modified
-
-# provide login infor for dataforsyning. Only needed if you want to download elevation data
-datafordeler_username: "MAKKFGPILT"
-datafordeler_password: "Testing23!"
-
-# fetch raw data from geofa? for now, default is False (since we cannot automate simplification while QGIS uses Python 3.9)
+# fetch raw data from GeoFA? (if True, also fill out config-geofa-download.yml!) 
 geofa: False
