@@ -1,43 +1,71 @@
-# insert simplification script here (python 310 or above, with sgeop)
-# using data from data/network-technical/geofa/edges.gpkg (and -nodes.gpkg)
+import os
+import yaml
+import sgeop
+import geopandas as gpd
+from src import utils
 
+### READ GENERAL CONFIGS ###
+config = yaml.load(open("./config/config.yml"), Loader=yaml.FullLoader)
+proj_crs = config["proj_crs"]
 
-# edges_studyarea["edge_id"] = edges_studyarea.id_cykelknudepunktsstraekning
-# assert len(edges_studyarea) == len(
-#     edges_studyarea["edge_id"].unique()
-# ), "Edge ids are not unique"
+### CREATE SUBFOLDERS ###
+sub_folders = [
+    "./data/network-communication/geofa/",
+]
 
-# nodes_studyarea["node_id"] = nodes_studyarea.id_cykelknudepkt
-# assert len(nodes_studyarea) == len(
-#     nodes_studyarea["node_id"].unique()
-# ), "Node ids are not unique"
+for sub_folder in sub_folders:
+    os.makedirs(sub_folder, exist_ok=True)
 
-# processed_edges = utils.assign_edges_start_end_nodes(edges_studyarea, nodes_studyarea)
+print("Subfolders created...")
 
-# processed_edges = utils.order_edge_nodes(processed_edges)
+### CLEAN DATA FOLDER ###
 
-# processed_edges = utils.find_parallel_edges(processed_edges)
+# remove previous output
+utils.remove_output_data(
+    sub_folders,
+    remove_previous_output=True,
+    verbose=True,
+)
 
-# assert len(processed_edges) == len(
-#     edges_studyarea
-# ), "The number of edges has changed (processed_edges not same length as edges_studyarea)"
+### READ (TECHNICAL) EDGE DATA ###
 
-# processed_nodes = nodes_studyarea.loc[
-#     nodes_studyarea["node_id"].isin(processed_edges["u"])
-#     | nodes_studyarea["node_id"].isin(processed_edges["v"])
-# ]
+edges = gpd.read_file(
+    "./data/network-technical/geofa/cykelknudepunktsstraekninger.gpkg"
+)
 
-# # save to files
-# os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+### preprocess edges for sgeop input ###
+edges = edges[["geometry"]]
+edges = edges.to_crs(proj_crs)
+edges = gpd.GeoDataFrame(
+    {
+        "geometry": edges.geometry.explode()
+    },
+    crs = proj_crs
+)
+# removing duplicated and overlapping geoms
+edges = edges[~edges.geometry.duplicated()].reset_index(drop=True)
+edges_union = edges.union_all()
+edge_geoms = [g for g in edges_union.geoms]
+edges = gpd.GeoDataFrame(
+    {
+        "geometry": edge_geoms,
+    },
+    crs = proj_crs
+)
 
-# processed_nodes.to_file(
-#     "../input-for-bike-node-planner/network/processed/nodes.gpkg", index=False
-# )
+print("Edges read in and preprocessed.")
 
-# processed_edges.to_file(
-#     "../input-for-bike-node-planner/network/processed/edges.gpkg", index=False
-# )
+# simplify
+print("Simplifying network...")
+edges_simp = sgeop.simplify_network(
+    roads=edges,
+    artifact_threshold=12 # set manually!
+)
 
-# print("Data on nodes and edges for study area processed and saved...")
-# print("GeoFA data fetching not implemented yet")
-# exit()
+# save to file
+print("Saving to file...")
+edges_simp.to_file(
+    "./data/network-communication/geofa/edges.gpkg"
+)
+
+print("Done!")
