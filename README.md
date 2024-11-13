@@ -1,6 +1,6 @@
-# BikeNodePlanner: Data for Denmark
+# BikeNodePlanner: Data for Denmark 🇩🇰
 
-This repository contains all data and scripts necessary to _automatically_ create the input data needed for the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner) for one or several Danish municipalities. The network data is fetched from [GeoFA](https://geofa-kort.geodanmark.dk/app/fkg/?config=/api/v2/configuration/fkg/configuration_fkg_udgivet_5f465f5d3181f687353260.json#Basis_kort/8/9.8328/55.9892/fkg.t_5609_cykelknudepunktsstraekninger,fkg.t_5608_cykelknudepunkter).
+This repository contains all data and scripts necessary to _automatically_ create the input data needed for the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner) for one or several Danish municipalities. The network data has been fetched from [GeoFA](https://geofa-kort.geodanmark.dk/app/fkg/?config=/api/v2/configuration/fkg/configuration_fkg_udgivet_5f465f5d3181f687353260.json#Basis_kort/8/9.8328/55.9892/fkg.t_5609_cykelknudepunktsstraekninger,fkg.t_5608_cykelknudepunkter) on October 11, 2024.
 
 ## Step 1: Download this repository
 
@@ -10,8 +10,8 @@ This repository contains all data and scripts necessary to _automatically_ creat
 
 To set up the BikeNodePlanner environment on your machine, you need to install the latest long-term release of QGIS, as well as some additional Python packages *within* QGIS. Detailed instructions depend on your operating system:
 
-* [macOS/linux: step02_install_software_macos](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_macos.md)
-* [Windows: step02_install_software_windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_windows.md)
+* macOS/linux: [step02_install_software_macos](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_macos.md)
+* Windows: [step02_install_software_windows](https://github.com/anastassiavybornova/bike-node-planner/blob/main/docs/step02_install_software_windows.md)
 
 > Note: This step is identical to Step 2 in the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner?tab=readme-ov-file#step-2-software-installations) instructions.
 
@@ -19,10 +19,8 @@ To set up the BikeNodePlanner environment on your machine, you need to install t
 
 In the [`config`](config/) folder, fill out the required information:
 
-<!-- * Data download ([`config.yml`](config/config.yml)) -->
 * Which municipalities to include? ([`config-municipalities.yml`](config/config-municipalities.yml))
 * Which point layers to include? ([`config-layers-point.yml`](config/config-layers-point.yml))
-<!-- * Which linestring layers? (`config-layers-linestring.yml`) -->
 * Which polygon layers to include? ([`config-layers-polygon.yml`](config/config-layers-polygon.yml))
 
 Go to [./docs/define-layers.md](./docs/define-layers.md) for detailed instructions on how to define the study area and the (point and polygon) evaluation layers.
