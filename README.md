@@ -1,5 +1,7 @@
 # BikeNodePlanner: Data for Denmark 🇩🇰
 
+<p align="center"><img alt="The Cycle Node Network Planner" src="./img/social-preview.png" width=100%></p>
+
 This repository contains all data and scripts necessary to _automatically_ create the input data needed for the [BikeNodePlanner](https://github.com/anastassiavybornova/bike-node-planner) for one or several Danish municipalities. The network data has been fetched from [GeoFA](https://geofa-kort.geodanmark.dk/app/fkg/?config=/api/v2/configuration/fkg/configuration_fkg_udgivet_5f465f5d3181f687353260.json#Basis_kort/8/9.8328/55.9892/fkg.t_5609_cykelknudepunktsstraekninger,fkg.t_5608_cykelknudepunkter) on October 11, 2024.
 
 ## Step 1: Download this repository
