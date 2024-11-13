@@ -6,17 +6,17 @@ from src import utils
 ### READ CONFIG FILES ### 
 
 # general configs
-config = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
+config = yaml.load(open("./config/config.yml"), Loader=yaml.FullLoader)
 proj_crs = config["proj_crs"]
 
 # municipalities
 municipalities = yaml.load(
-    open("../config/config-municipalities.yml"), Loader=yaml.FullLoader
+    open("./config/config-municipalities.yml"), Loader=yaml.FullLoader
 )
 codes = municipalities["kommunekode"]
 
 # GeoFA configs
-config_geofa = yaml.load(open("../config/config-geofa-download.yml"), Loader=yaml.FullLoader)
+config_geofa = yaml.load(open("./config/config-geofa-download.yml"), Loader=yaml.FullLoader)
 wfs_version = config_geofa["geofa_wfs_version"]
 node_layer_name = config_geofa["geofa_nodes_layer_name"]
 stretches_layer_name = config_geofa["geofa_stretches_layer_name"]
@@ -25,8 +25,8 @@ stretches_layer_name = config_geofa["geofa_stretches_layer_name"]
 
 # make folders
 sub_folders = [
-    "../data/network-communication/geofa/",
-    "../data/network-technical/geofa/"
+    "./data/network-communication/geofa/",
+    "./data/network-technical/geofa/"
 ]
 
 for sub_folder in sub_folders:
@@ -46,7 +46,7 @@ utils.remove_output_data(
 ### CREATE STUDY AREA POLYGON ###
 
 ### read in municipality boundaries & create study area polygon
-gdf = gpd.read_file("../data/municipality-boundaries/municipality-boundaries.gpkg")
+gdf = gpd.read_file("./data/municipality-boundaries/municipality-boundaries.gpkg")
 gdf = gdf.to_crs(proj_crs)  # make sure we have the right projected CRS
 gdf = gdf[
     gdf["kommunekode"].isin(codes)
@@ -87,7 +87,7 @@ assert (
 
 edges_studyarea = straekninger.sjoin(gdf_studyarea, predicate="intersects").copy()
 edges_studyarea.drop(columns=["index_right"], inplace=True)
-nodes_studyarea = knudepunkter.clip(edges_studyarea.buffer(500).unary_union)
+nodes_studyarea = knudepunkter.clip(edges_studyarea.buffer(500).union_all())
 
 # remove empty geometries
 edges_studyarea = edges_studyarea[edges_studyarea.geometry.notna()].reset_index(
@@ -112,11 +112,11 @@ assert all(
 assert all(edges_studyarea.geometry.is_valid), "Not all edge geometries are valid"
 
 edges_studyarea.to_file(
-    "../data/network-technical/edges.gpkg", index=False
+    "./data/network-technical/geofa/cykelknudepunktsstraekninger.gpkg", index=False
 )
 
 nodes_studyarea.to_file(
-    "../data/network-technical/nodes.gpkg", index=False
+    "./data/network-technical/geofa/cykelknudepunkter.gpkg", index=False
 )
 
 print("Raw data on nodes and edges for study area fetched from GeoFA and saved...")
