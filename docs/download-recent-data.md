@@ -19,7 +19,7 @@ Run steps 1-3 from the README:
 
 ## Fill out configuration file
 
-In `./config/config.yml`, set geofa to True:
+In `./config/config.yml`, set `geofa` to `True`:
 
 ```python
 geofa: True
