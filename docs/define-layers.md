@@ -4,24 +4,23 @@ In this step, you can customize the input data generation by selecting whether t
 
 You do so by editing the four `.yml` files in the config folder of this repository (`config.yml`, `config-municipalities.yml`, `config-layers-point.yml`, and `config-layers-polygon.yml`; explained in detail below). You can edit `.yml` in any standard text editor on your machine; then save your changes for them to take effect, before you continue to the next step.
 
-## Settings for data download (`config.yml`)
+## Settings for elevation data download (`config.yml`)
 
-Here you can provide the settings for data download and preprocessing (name of data layers in GeoFA, etc.)
+**If you don't have an elevation raster (DEM) for the study area:**
 
-The workflow includes a script that downloads elevation data from [Dataforsyningen](https://dataforsyningen.dk/).
-To use this step, the setting `download_elevation_data` must be set to `True` (the default) *and* you must provide your username (at `datafordeler_username`) and password (at `datafordeler_password`) to Dataforsyningen.
+The workflow includes a script that downloads elevation data from [Dataforsyningen](https://dataforsyningen.dk/) upon request. To do so, provide your username (at `datafordeler_username`) and password (at `datafordeler_password`) to Dataforsyningen in the `config.yml` file. In the next step, make sure to set `download_elevation` to `1` when running the bash script ([Step 4](run-bashscript.md)).
 
 **If you already have an elevation raster (DEM) for the study area:**
 
-1. In the `config.yml` file, set `download_elevation_data` to `False`. 
-2. Complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
+1. Complete [steps 1-4](https://github.com/anastassiavybornova/bike-node-planner-data-denmark/tree/main) of the instructions.
+2. Make sure to set `download_elevation` to `0` when running the bash script ([Step 4](run-bashscript.md)).
 3. Place your DEM file in the `/input-for-bike-node-planner/dem/` folder and name the file `dem.tif`.
 
 ## Which municipalities? (`config-municipalities.yml`)
 
 For each municipality that you want to be included in the analysis, delete the leading `#` in front of the corresponding 4-digit code; then save the file. Make sure not to change the indentation. In the example below, the file is edited so that the 3 municipalities of Gentofte, Gladsaxe, and Herlev will be included in the analysis, while the rest of the municipalities (Frederiksberg, Ballerup, etc.) will be ignored.
 
-<p align="center"><img alt="modifying config-municipalities.yml" src="/docs/screenshots/config-muni.png" width=50%></p>
+<p align="center"><img alt="modifying config-municipalities.yml" src="../docs/screenshots/config-muni.png" width=50%></p>
 
 ## Which point layers? (`config-layers-point.yml`)
 
