@@ -25,11 +25,6 @@ config = yaml.load(open("../config/config.yml"), Loader=yaml.FullLoader)
 proj_crs = config["proj_crs"]
 geofa = bool(config["geofa"])
 
-config_geofa = yaml.load(open("../config/config-geofa-download.yml"), Loader=yaml.FullLoader)
-wfs_version = config_geofa["geofa_wfs_version"]
-node_layer_name = config_geofa["geofa_nodes_layer_name"]
-stretches_layer_name = config_geofa["geofa_stretches_layer_name"]
-
 municipalities = yaml.load(
     open("../config/config-municipalities.yml"), Loader=yaml.FullLoader
 )
