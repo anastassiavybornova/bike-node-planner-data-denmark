@@ -1,5 +1,9 @@
 # provide projected crs 
 proj_crs: "EPSG:25832"
 
+# provide login infor for dataforsyning. Only needed if you want to download elevation data
+datafordeler_username: "MAKKFGPILT"
+datafordeler_password: "Testing23!"
+
 # fetch raw data from GeoFA? (if True, also fill out config-geofa-download.yml!) 
 geofa: False

@@ -1,7 +1,3 @@
 geofa_stretches_layer_name: "fkg.t_5609_cykelknudepunktsstraekninger" # leave default setting unless the GeoFA data have been modified
 geofa_nodes_layer_name: "fkg.t_5608_cykelknudepunkter" # leave default setting unless the GeoFA data have been modified
 geofa_wfs_version: "2.0.0" # leave default setting unless the GeoFA data have been modified
-
-# provide login infor for dataforsyning. Only needed if you want to download elevation data
-datafordeler_username: "MAKKFGPILT"
-datafordeler_password: "Testing23!"
