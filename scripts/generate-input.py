@@ -82,6 +82,10 @@ utils.remove_output_data(
     verbose=True,
 )
 
+### CREATE NETWORK FOLDERS ###
+os.makedirs("../input-for-bike-node-planner/network/raw/", exist_ok=True)
+os.makedirs("../input-for-bike-node-planner/network/processed/", exist_ok=True)
+
 ### CREATE STUDY AREA POLYGON ###
 
 ### read in municipality boundaries & create study area polygon
@@ -112,7 +116,7 @@ utils.get_edges_and_nodes(
     datasource=mydatasource,
     proj_crs=proj_crs,
     study_poly=study_poly,
-    gdf_studyarea=gdf_studyarea
+    gdf_studyarea=gdf_studyarea,
 )
 
 ### CREATE EVALUATION LAYERS ###
