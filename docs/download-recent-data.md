@@ -42,7 +42,7 @@ conda activate knupu
 In your terminal, and with the `knupu` environment activated, run the script:
 
 ```bash
-python scripts/recent-data-download.py
+python3 scripts/recent-data-download.py
 ```
 
 > **Note:** This only works for municipalities for which data is currently publicly availabe on GeoFA. If your municipality of interest does not have publicly available data yet, or if the script fails to run for another reason, follow the instructions below for manual download.
@@ -67,7 +67,7 @@ If so, you can now run the preprocessing script that will generate simplified ne
 To run the preprocessing script, in your terminal and with the `knupu` environment activated, run:
 
 ```bash
-python scripts/recent-data-simplify.py
+python3 scripts/recent-data-simplify.py
 ```
 
 This step can take several minutes to complete.
