@@ -70,7 +70,7 @@ To run the preprocessing script, in your terminal and with the `knupu` environme
 python3 scripts/recent-data-simplify.py
 ```
 
-This step can take several minutes to complete.
+> **Note:** This step can take several minutes per municipality to complete. While running the script, potentially occuring `UserWarning` messages from the [`sgeop`](https://github.com/uscuni/sgeop) package can be ignored.
 
 ## Continue with Steps 4-5 from [README.md](../README.md)
 
