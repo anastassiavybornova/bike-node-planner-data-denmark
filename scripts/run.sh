@@ -13,11 +13,11 @@ done
 echo "Running worflow with settings:"
 echo "download_elevation: '$download_elevation'"
 echo "python path: '$python_path'"
-echo "proj.db fiona path: '$projdb_path'"
+echo "proj.db path: '$projdb_path'"
 
 $python_path generate-input.py
 
-export PROJ_LIB=$projdb_path # point to QGIS' fiona proj.db location
+export PROJ_LIB=$projdb_path # point to QGIS' proj.db location
 
 if [ "$download_elevation" == "1" ] ; then 
     $python_path -W ignore generate-elevation.py
