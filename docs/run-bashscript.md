@@ -10,7 +10,7 @@ bash run.sh --download_elevation 1 --python_path /Applications/QGIS-LTR.app/Cont
 
 * `download_elevation`: 1 for Yes, 0 for No (should elevation data be downloaded?)
 * `python_path`: the path to your Python installation for the QGIS app on your local machine (which you already used in [Step 02](../README.md#step-2-software-installations)).
-* `projdb_path`: the path to the folder inside your QGIS installation in which the file `proj.db` is located.
+* `projdb_path`: the path to the `/proj/` folder inside your QGIS installation in which the file `proj.db` is located.
 
 <details>
 <summary>To determine the location of `proj.db` (click to expand)</summary>
