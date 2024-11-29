@@ -59,7 +59,8 @@ print("Edges read in and preprocessed.")
 print("Simplifying network...")
 edges_simp = sgeop.simplify_network(
     roads=edges,
-    artifact_threshold=12 # set manually!
+    artifact_threshold=11, # set manually!
+    max_segment_length=10 # set manually!
 )
 
 # save to file
