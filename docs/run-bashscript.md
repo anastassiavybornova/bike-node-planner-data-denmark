@@ -17,7 +17,7 @@ bash run.sh --download_elevation 1 --python_path /Applications/QGIS-LTR.app/Cont
 
 * Navigate to your QGIS installation in your file explorer.
 * On a Mac, go to Applications > Find QGIS > Right click and choose *'Show package contents'*.
-* In the QGIS installation folder, search for `proj.db` and copy the file path. On a MacOS, you can do this selecting the proj.db file, right clicking on the file in the bottom of the window, and choosing *'Copy "proj.db" as Path name'* (see an example for MacOS in the screenshot below). In case of more than one `proj.db` file, pick the one in the `../Resources/proj/` folder. *Note:* The path should not include the proj.db file itself.
+* In the QGIS installation folder, search for `proj.db` and copy the file path. On a MacOS, you can do this selecting the proj.db file, right clicking on the file in the bottom of the window, and choosing *'Copy "proj.db" as Path name'* (see an example for MacOS in the screenshot below). In case of more than one `proj.db` file, pick the one in the `../Resources/proj/` folder. *Note:* The path should not include the `proj.db` file itself.
 
 <p align="center"><img alt="identifying the proj path" src="/docs/screenshots/find-proj.png" width=100%></p>
 
